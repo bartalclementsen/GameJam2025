@@ -13,6 +13,7 @@ namespace Jákup_Viljam.Models
         public NodeType Type;
         public LineType LineType;
         public List<MusicNode> NextNodes = new();
+        // TODO ADD SLOPE TYPE (defining which whay the player should be angled)
 
         private readonly Core.Loggers.ILogger _logger;
 
