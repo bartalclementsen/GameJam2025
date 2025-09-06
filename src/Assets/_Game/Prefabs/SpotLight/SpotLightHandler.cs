@@ -91,16 +91,16 @@ public class SpotLightHandler : MonoBehaviour
 
         float targetScale = _incrementingScale ? _triangleMaxXScale : _triangleMinXScale;
 
-        // Interpolate in degrees (handles wrap-around correctly)
+        //  Linearly interpolate between start and target scale
         float newXScale = Mathf.Lerp(_startScale, targetScale, interpolationFraction);
 
-        // Apply rotation preserving X/Y
+        // Apply X scale preserving Y/Z
         Vector3 localScale = _spriteRenderer.transform.localScale;
         localScale.x = newXScale;
 
         _spriteRenderer.transform.localScale = localScale;
 
-        // When cycle complete, reset counter and flip direction, set start angle for next cycle
+        // When cycle complete, reset counter and flip direction, set start scale for next cycle
         if (_scaleLerpFrameTimeCounter >= lerpTimeInSeconds)
         {
             _scaleLerpFrameTimeCounter = 0f;
