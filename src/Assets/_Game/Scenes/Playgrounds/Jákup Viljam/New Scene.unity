@@ -211,54 +211,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &155437799
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 155437801}
-  - component: {fileID: 155437800}
-  m_Layer: 0
-  m_Name: InputHandler
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &155437800
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 155437799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 721f37e85a9e9b7498bec518a8c72717, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: "Assembly-CSharp::J\xE1kup_Viljam.PlayerInputHandler"
-  PerfectWindowMs: 50
-  GoodWindowMs: 100
-  _rhythmHandler: {fileID: 169921773}
-  _playerHandler: {fileID: 0}
---- !u!4 &155437801
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 155437799}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &169921772
 GameObject:
   m_ObjectHideFlags: 0
@@ -290,7 +242,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: "Assembly-CSharp::J\xE1kup_Viljam.RhythmHandler"
   BPM: 100
   Subdivisions: 8
-  _playerHandler: {fileID: 1541035703}
+  _gameHandler: {fileID: 2015113412}
 --- !u!4 &169921774
 Transform:
   m_ObjectHideFlags: 0
@@ -335,12 +287,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32492718f2810244eb9bb0d7b7602639, type: 3}
   m_Name: 
   m_EditorClassIdentifier: "Assembly-CSharp::J\xE1kup_Viljam.PlayerHandler"
-  CurrentBar: 0
-  CurrentBeat: 0
   CurrentLine: 2
-  TotalBars: 0
-  BeatsPerBar: 0
-  Lines: 0
+  _gameHandler: {fileID: 2015113412}
 --- !u!4 &1541035704
 Transform:
   m_ObjectHideFlags: 0
@@ -385,7 +333,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8980618bcd59ae44e800e48ce693636b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: "Assembly-CSharp::Assets._Game.Scenes.Playgrounds.J\xE1kup_Viljam.JVDGameHandler"
-  _inputHandler: {fileID: 155437800}
+  PerfectWindowMs: 50
+  GoodWindowMs: 100
+  CurrentBar: 0
+  CurrentBeat: 0
+  TotalBars: 16
+  BeatsPerBar: 8
+  Lines: 5
+  Score: 0
+  _rhythmHandler: {fileID: 169921773}
+  _playerHandler: {fileID: 1541035703}
 --- !u!4 &2015113413
 Transform:
   m_ObjectHideFlags: 0
@@ -407,6 +364,5 @@ SceneRoots:
   m_Roots:
   - {fileID: 55604531}
   - {fileID: 2015113413}
-  - {fileID: 155437801}
   - {fileID: 169921774}
   - {fileID: 1541035704}

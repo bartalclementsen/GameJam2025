@@ -10,12 +10,21 @@ namespace Jákup_Viljam
 {
     public class JVDGameHandler : MonoBehaviour
     {
-        [SerializeField]
-        private PlayerInputHandler _inputHandler;
+        public float PerfectWindowMs = 50f;
+        public float GoodWindowMs = 100f;
+        public int CurrentBar = 0;
+        public int CurrentBeat = 0;
+        public int TotalBars;
+        public int BeatsPerBar;
+        public int Lines;
+        public int Score = 0;
+
         [SerializeField]
         private RhythmHandler _rhythmHandler;
         [SerializeField]
         private PlayerHandler _playerHandler;
+
+        private bool _isGameOver;
 
         private Core.Loggers.ILogger _logger;
 
@@ -34,7 +43,47 @@ namespace Jákup_Viljam
 
         public void OnRhytmTick()
         {
+            if (_isGameOver == false)
+            {
+                AdvanceBeat();
+            }
+        }
 
+        public void OnPlayerAction()
+        {
+            float now = Time.time * 1000f;
+            float diff = Mathf.Abs(now - _rhythmHandler.NextTickTimeMs());
+
+            if (diff <= PerfectWindowMs)
+            {
+                Score += 100;
+            }
+            else if (diff <= GoodWindowMs)
+            {
+                Score += 50;
+            }
+            else
+            {
+                Score += 10;
+            }
+
+            _logger?.Log($"Accuracy {diff:F0}ms, Score {Score}");
+        }
+
+        private void AdvanceBeat()
+        {
+            CurrentBeat++;
+            if (CurrentBeat >= BeatsPerBar)
+            {
+                CurrentBeat = 0;
+                CurrentBar++;
+            }
+
+            if (CurrentBar >= TotalBars)
+            {
+                _logger?.Log("Song finished!");
+                _isGameOver = true;
+            }
         }
 
         private MusicGraph GenerateStaticMusicGraph()
