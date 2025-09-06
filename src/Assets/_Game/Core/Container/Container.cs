@@ -10,7 +10,7 @@ namespace Core.Containers
         /* ----------------------------------------------------------------------------  */
         /*                                  PROPERTIES                                   */
         /* ----------------------------------------------------------------------------  */
-        private Dictionary<Type, TypeFactory> _types = new Dictionary<Type, TypeFactory>();
+        private readonly Dictionary<Type, TypeFactory> _types = new();
 
         /* ----------------------------------------------------------------------------  */
         /*                                PUBLIC METHODS                                 */
@@ -23,13 +23,25 @@ namespace Core.Containers
         /* ----------------------------------------------------------------------------  */
         /*                               INTERNAL METHODS                                */
         /* ----------------------------------------------------------------------------  */
-        internal void Register(Type key, Type value) => Register(key, value, null, false);
+        internal void Register(Type key, Type value)
+        {
+            Register(key, value, null, false);
+        }
 
-        internal void Register(Type key, Func<IContainer, object> factory) => Register(key, null, factory, false);
+        internal void Register(Type key, Func<IContainer, object> factory)
+        {
+            Register(key, null, factory, false);
+        }
 
-        internal void RegisterSingleton(Type key, Type value) => Register(key, value, null, true);
+        internal void RegisterSingleton(Type key, Type value)
+        {
+            Register(key, value, null, true);
+        }
 
-        internal void RegisterSingleton(Type key, Func<IContainer, object> factory) => Register(key, null, factory, true);
+        internal void RegisterSingleton(Type key, Func<IContainer, object> factory)
+        {
+            Register(key, null, factory, true);
+        }
 
         internal bool TryResolve(Type type, out object result)
         {
@@ -44,7 +56,7 @@ namespace Core.Containers
             {
                 foreach (KeyValuePair<Type, TypeFactory> pair in _types)
                 {
-                    var interfaces = pair.Key.GetInterfaces();
+                    Type[] interfaces = pair.Key.GetInterfaces();
                     if (interfaces.Contains(type))
                     {
                         iocFactory = pair.Value;
@@ -65,7 +77,9 @@ namespace Core.Containers
             bool success = TryResolve(type, out result);
 
             if (!success)
+            {
                 throw new Exception($"{type.Name} not found in container");
+            }
 
             return result;
         }
@@ -87,9 +101,9 @@ namespace Core.Containers
             private readonly Func<IContainer, object> _factory;
             private readonly Container _container;
 
-            private bool _isSingleton = false;
+            private readonly bool _isSingleton = false;
             private object _instance;
-            private object _theLock = new object();
+            private readonly object _theLock = new();
 
             public TypeFactory(Type type, Func<IContainer, object> factory, Container container, bool isSingleton = false)
             {
@@ -105,8 +119,7 @@ namespace Core.Containers
                 {
                     lock (_theLock)
                     {
-                        if (_instance == null)
-                            _instance = CreateType();
+                        _instance ??= CreateType();
                         return _instance;
                     }
                 }
@@ -127,7 +140,9 @@ namespace Core.Containers
                     ConstructorInfo[] constructorsInfo = _type.GetConstructors();
 
                     if (constructorsInfo.Length > 1)
+                    {
                         throw new Exception("Can not use more than on constructor");
+                    }
 
                     ConstructorInfo constructorInfo = constructorsInfo.First();
 

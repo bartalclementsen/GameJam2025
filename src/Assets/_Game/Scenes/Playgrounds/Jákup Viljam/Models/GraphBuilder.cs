@@ -28,6 +28,7 @@ namespace Jákup_Viljam.Models
                 if (node != null)
                 {
                     node.Type = n.Type;
+                    node.LineType = n.LineType;
                 }
             }
 

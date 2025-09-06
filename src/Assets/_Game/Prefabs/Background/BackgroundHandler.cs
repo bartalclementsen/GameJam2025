@@ -14,7 +14,7 @@ public class BackgroundHandler : MonoBehaviour
 
     private Core.Loggers.ILogger _logger;
 
-    float _lerpFrameTimeCounter = 0;
+    private float _lerpFrameTimeCounter = 0;
 
     private Color _baseColor;
 

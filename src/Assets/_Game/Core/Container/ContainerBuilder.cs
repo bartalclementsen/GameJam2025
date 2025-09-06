@@ -5,42 +5,68 @@ namespace Core.Containers
 {
     public class ContainerBuilder
     {
-        private Dictionary<Type, TypeToRegisterWrapper> typesToRegister = new Dictionary<Type, TypeToRegisterWrapper>();
+        private readonly Dictionary<Type, TypeToRegisterWrapper> typesToRegister = new();
 
         /* ----------------------------------------------------------------------------  */
         /*                                PUBLIC METHODS                                 */
         /* ----------------------------------------------------------------------------  */
-        public ContainerBuilder Register<T>() where T : class => Register(typeof(T), null, null, false);
+        public ContainerBuilder Register<T>() where T : class
+        {
+            return Register(typeof(T), null, null, false);
+        }
 
-        public ContainerBuilder Register<T1, T2>() where T1 : class where T2 : T1 => Register(typeof(T1), typeof(T2), null, false);
+        public ContainerBuilder Register<T1, T2>() where T1 : class where T2 : T1
+        {
+            return Register(typeof(T1), typeof(T2), null, false);
+        }
 
-        public ContainerBuilder Register<T>(Func<IContainer, T> factory) where T : class => Register(typeof(T), null, factory, false);
+        public ContainerBuilder Register<T>(Func<IContainer, T> factory) where T : class
+        {
+            return Register(typeof(T), null, factory, false);
+        }
 
-        public ContainerBuilder RegisterSingleton<T>() where T : class => Register(typeof(T), null, null, true);
+        public ContainerBuilder RegisterSingleton<T>() where T : class
+        {
+            return Register(typeof(T), null, null, true);
+        }
 
-        public ContainerBuilder RegisterSingleton<T1, T2>() where T1 : class where T2 : T1 => Register(typeof(T1), typeof(T2), null, true);
+        public ContainerBuilder RegisterSingleton<T1, T2>() where T1 : class where T2 : T1
+        {
+            return Register(typeof(T1), typeof(T2), null, true);
+        }
 
-        public ContainerBuilder RegisterSingleton<T>(Func<IContainer, T> factory) where T : class => Register(typeof(T), null, factory, true);
+        public ContainerBuilder RegisterSingleton<T>(Func<IContainer, T> factory) where T : class
+        {
+            return Register(typeof(T), null, factory, true);
+        }
 
         public IContainer Build()
         {
-            Container container = new Container();
+            Container container = new();
 
             foreach (KeyValuePair<Type, TypeToRegisterWrapper> types in typesToRegister)
             {
                 if (types.Value.IsSingleton)
                 {
                     if (types.Value.Factory != null)
+                    {
                         container.RegisterSingleton(types.Key, types.Value.Factory);
+                    }
                     else
+                    {
                         container.RegisterSingleton(types.Key, types.Value.Type);
+                    }
                 }
                 else
                 {
                     if (types.Value.Factory != null)
+                    {
                         container.Register(types.Key, types.Value.Factory);
+                    }
                     else
+                    {
                         container.Register(types.Key, types.Value.Type);
+                    }
                 }
 
             }

@@ -15,7 +15,7 @@ namespace Core.Loggers
         /// <summary>
         /// Object to which the message applies.
         /// </summary>
-        private UnityEngine.Object _unityContext;
+        private readonly UnityEngine.Object _unityContext;
 
         /// <summary>
         /// Used to identify the source of a log message. It usually identifies the class where the log call occurs.
@@ -83,9 +83,13 @@ namespace Core.Loggers
         public void Exception(Exception exception)
         {
             if (_unityContext == null)
+            {
                 _logger.LogException(exception);
+            }
             else
+            {
                 _logger.LogException(exception, _unityContext);
+            }
         }
 
         /* ----------------------------------------------------------------------------  */
@@ -94,9 +98,13 @@ namespace Core.Loggers
         private void DoLog(object message, LogType logType)
         {
             if (string.IsNullOrWhiteSpace(_tag) && _unityContext == null)
+            {
                 _logger.Log(logType, message);
+            }
             else
+            {
                 _logger.Log(logType, _tag, message, _unityContext);
+            }
         }
 
         private class LogHandler : ILogHandler

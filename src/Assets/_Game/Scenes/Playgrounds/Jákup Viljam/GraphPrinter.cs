@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class GraphPrinter : MonoBehaviour
 {
-    void Start()
+    private void Start()
     {
-        GraphStructure structure = new GraphStructure
+        GraphStructure structure = new()
         {
             Lines = 5,
             BeatsPerBar = 8,
@@ -32,12 +32,12 @@ public class GraphPrinter : MonoBehaviour
         PrintSpecificNodes(graph);
     }
 
-    void Update()
+    private void Update()
     {
 
     }
 
-    void PrintSpecificNodes(MusicGraph graph)
+    private void PrintSpecificNodes(MusicGraph graph)
     {
         MusicNode node1 = graph.GetNode(bar: 0, beat: 0, line: 0);
         node1?.PrintInfo();

@@ -8,9 +8,14 @@ namespace Core.Mediators
         public void Set(string key, string value)
         {
             if (value == null)
+            {
                 throw new ArgumentNullException(nameof(value));
+            }
+
             if (string.IsNullOrWhiteSpace(key))
+            {
                 throw new ArgumentNullException(nameof(key));
+            }
 
             PlayerPrefs.SetString(key, value);
             PlayerPrefs.Save();
@@ -19,7 +24,9 @@ namespace Core.Mediators
         public string Get(string key)
         {
             if (string.IsNullOrWhiteSpace(key))
+            {
                 throw new ArgumentNullException(nameof(key));
+            }
 
             return PlayerPrefs.GetString(key);
         }
@@ -27,7 +34,9 @@ namespace Core.Mediators
         public bool HasKey(string key)
         {
             if (string.IsNullOrWhiteSpace(key))
+            {
                 throw new ArgumentNullException(nameof(key));
+            }
 
             return PlayerPrefs.HasKey(key);
         }
@@ -35,7 +44,9 @@ namespace Core.Mediators
         public void Delete(string key)
         {
             if (string.IsNullOrWhiteSpace(key))
+            {
                 throw new ArgumentNullException(nameof(key));
+            }
 
             PlayerPrefs.DeleteKey(key);
         }

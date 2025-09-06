@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Jákup_Viljam.Models;
 using UnityEngine;
 
@@ -103,7 +99,7 @@ namespace Jákup_Viljam
                     new(0, 2, 0, NodeType.Untangled, LineType.OnLine),
                     new(0, 4, 0, NodeType.Untangled, LineType.OnLine),
                     new(0, 4, 1, NodeType.Untangled, LineType.OnLine),
-                    new(0, 6, 2, NodeType.Untangled, LineType.OnLine), 
+                    new(0, 6, 2, NodeType.Untangled, LineType.OnLine),
 
                     new(1, 0, 0, NodeType.Untangled, LineType.OnLine),
                     new(1, 0, 1, NodeType.Untangled, LineType.OnLine),
@@ -111,7 +107,7 @@ namespace Jákup_Viljam
                     new(1, 2, 2, NodeType.Untangled, LineType.OnLine),
                     new(1, 4, 0, NodeType.Untangled, LineType.OnLine),
                     new(1, 4, 0, NodeType.Untangled, LineType.OnLine),
-                    new(1, 4, 3, NodeType.Tangled, LineType.OnLine), 
+                    new(1, 4, 3, NodeType.Tangled, LineType.OnLine),
                     new(1, 7, 1, NodeType.Untangled, LineType.OnLine),
 
                     new(2, 0, 0, NodeType.Point, LineType.OnLine),
@@ -121,8 +117,8 @@ namespace Jákup_Viljam
                     new(2, 2, 0, NodeType.Untangled, LineType.OnLine),
                     new(2, 4, 4, NodeType.Tangled, LineType.OnLine),
                     new(2, 4, 1, NodeType.Untangled, LineType.OnLine),
-                    new(2, 6, 2, NodeType.Untangled, LineType.OnLine), 
-                    new(2, 7, 2, NodeType.Point, LineType.OnLine), 
+                    new(2, 6, 2, NodeType.Untangled, LineType.OnLine),
+                    new(2, 7, 2, NodeType.Point, LineType.OnLine),
 
                     new(3, 0, 2, NodeType.Untangled, LineType.OnLine),
                     new(3, 0, 1, NodeType.Tangled, LineType.OnLine),

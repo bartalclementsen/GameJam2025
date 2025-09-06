@@ -34,7 +34,7 @@ public class SpotLightHandler : MonoBehaviour
     private bool _incrementingScale = true;
     private float _startScale = 0f;
 
-    void Start()
+    private void Start()
     {
         _logger = Game.Container.Resolve<ILoggerFactory>().Create(this);
         _logger.Log("SpotLightHandler started");
@@ -49,7 +49,7 @@ public class SpotLightHandler : MonoBehaviour
         _startScale = _spriteRenderer.transform.localScale.x;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         ApplyRotation();
         ApplyScale();

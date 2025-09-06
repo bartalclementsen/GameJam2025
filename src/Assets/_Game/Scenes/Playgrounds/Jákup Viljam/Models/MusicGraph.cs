@@ -26,8 +26,10 @@ namespace Jákup_Viljam.Models
             InitializeGraph(inputNodes, totalBars, beatsPerBar, lines, connectAdjacentLines);
         }
 
-        public MusicNode GetNode(int bar, int beat, int line) =>
-            _nodes.TryGetValue((bar, beat, line), out MusicNode node) ? node : null;
+        public MusicNode GetNode(int bar, int beat, int line)
+        {
+            return _nodes.TryGetValue((bar, beat, line), out MusicNode node) ? node : null;
+        }
 
         public IEnumerable<MusicNode> AllNodes => _nodes.Values;
 
@@ -67,14 +69,17 @@ namespace Jákup_Viljam.Models
             }
         }
 
-        private char NodeSymbol(NodeType type) => type switch
+        private char NodeSymbol(NodeType type)
         {
-            NodeType.Untangled => '@',
-            NodeType.Point => '#',
-            NodeType.Powerup => '$',
-            NodeType.Tangled => 'X',
-            _ => '.'
-        };
+            return type switch
+            {
+                NodeType.Untangled => '@',
+                NodeType.Point => '#',
+                NodeType.Powerup => '$',
+                NodeType.Tangled => 'X',
+                _ => '.'
+            };
+        }
 
         private void InitializeGraph(List<MusicNode> inputNodes, int totalBars, int beatsPerBar, int lines, bool connectAdjacentLines)
         {
@@ -106,6 +111,19 @@ namespace Jákup_Viljam.Models
                 {
                     if (_nodes.TryGetValue((nextBar, nextBeat, l), out MusicNode target))
                     {
+                        if(l == node.Line)
+                        {
+                            node.RightNode = target;
+                        }
+                        else if (l > node.Line)
+                        {
+                            node.DownNode = target;
+                        }
+                        else
+                        {
+                            node.UpNode = target;
+                        }
+
                         node.NextNodes.Add(target);
                     }
                 }
