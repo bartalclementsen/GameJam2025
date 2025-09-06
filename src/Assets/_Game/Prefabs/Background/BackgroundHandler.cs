@@ -1,4 +1,3 @@
-using System;
 using Core.Loggers;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -15,7 +14,7 @@ public class BackgroundHandler : MonoBehaviour
 
     private Core.Loggers.ILogger _logger;
 
-    private DateTime _lastUpdateTime = DateTime.MinValue;
+    float _lerpFrameTimeCounter = 0;
 
     private Color _baseColor;
 
@@ -32,17 +31,21 @@ public class BackgroundHandler : MonoBehaviour
         Assert.IsTrue(_colors.Length > 1, "BackgroundHandler requires at least two colors to function.");
         _baseColor = _colors[0];
         _targetColor = _colors[1];
-        _lastUpdateTime = DateTime.Now;
     }
 
     // Fixed 60 frames per second
-    private void FixedUpdate()
+
+    private void Update()
     {
+        _lerpFrameTimeCounter += Time.deltaTime;
+
+        float lerpTimeInSeconds = _lerpTime / 1000;
+
         // Change color once lerp has reached max
-        DateTime nextResetCycle = _lastUpdateTime.AddMilliseconds(_lerpTime);
-        if (nextResetCycle < DateTime.Now)
+        if (_lerpFrameTimeCounter > lerpTimeInSeconds)
         {
-            _lastUpdateTime = DateTime.Now;
+            _lerpFrameTimeCounter = 0;
+
             int currentColorIndex = FindColorIndex(_targetColor);
             _baseColor = _colors[currentColorIndex];
             _logger.Log($"Changed base color to index {currentColorIndex}");
@@ -59,7 +62,7 @@ public class BackgroundHandler : MonoBehaviour
             }
         }
 
-        float lerpFactor = ((float)(DateTime.Now - _lastUpdateTime).Milliseconds) / _lerpTime;
+        float lerpFactor = _lerpFrameTimeCounter / lerpTimeInSeconds;
         Color interpolatedColor = Color.Lerp(_baseColor, _targetColor, lerpFactor);
         _spriteRenderer.color = interpolatedColor;
     }
