@@ -62,7 +62,7 @@ public class BackgroundHandler : MonoBehaviour
             }
         }
 
-        float lerpFactor = (lerpTimeInSeconds - _lerpFrameTimeCounter) / lerpTimeInSeconds;
+        float lerpFactor = _lerpFrameTimeCounter / lerpTimeInSeconds;
         Color interpolatedColor = Color.Lerp(_baseColor, _targetColor, lerpFactor);
         _spriteRenderer.color = interpolatedColor;
     }
