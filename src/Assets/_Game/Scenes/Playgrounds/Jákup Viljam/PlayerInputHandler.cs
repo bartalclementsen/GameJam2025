@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine.InputSystem;
 using UnityEngine;
 
 namespace Jákup_Viljam
@@ -21,13 +22,16 @@ namespace Jákup_Viljam
 
         void Start()
         {
-            _logger = Game.Container.Resolve<Core.Loggers.ILogger>();
+            _logger = Game.Container.Resolve<Core.Loggers.ILoggerFactory>().Create(this);
         }
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow)) HandleInput(+1);
-            if (Input.GetKeyDown(KeyCode.DownArrow)) HandleInput(-1);
+            if (Keyboard.current.upArrowKey.wasPressedThisFrame)
+                HandleInput(+1);
+
+            if (Keyboard.current.downArrowKey.wasPressedThisFrame)
+                HandleInput(-1);
         }
 
         void HandleInput(int direction)

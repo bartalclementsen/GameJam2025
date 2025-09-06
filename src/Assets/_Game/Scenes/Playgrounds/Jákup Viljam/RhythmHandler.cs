@@ -14,18 +14,22 @@ namespace Jákup_Viljam
         public int CurrentTick { get; private set; }
 
         [SerializeField]
-        private PlayerHandler _playerHandler;
+        private JVDGameHandler _gameHandler;
 
         private float _msPerTick;
         private float _nextTickTime;
 
-        void Start()
+        private Core.Loggers.ILogger _logger;   
+
+        private void Start()
         {
+            _logger = Game.Container.Resolve<Core.Loggers.ILoggerFactory>().Create(this);
+
             _msPerTick = 60000f / BPM / (Subdivisions / 4f);
             _nextTickTime = Time.time * 1000f + _msPerTick;
         }
 
-        void Update()
+        private void Update()
         {
             float now = Time.time * 1000f;
 
@@ -37,10 +41,9 @@ namespace Jákup_Viljam
             }
         }
 
-        void OnTick()
+        private void OnTick()
         {
-            // tell player to auto-move forward one beat
-            _playerHandler.AdvanceBeat();
+            _gameHandler.OnRhytmTick();
         }
 
         public float NextTickTimeMs() => _nextTickTime;

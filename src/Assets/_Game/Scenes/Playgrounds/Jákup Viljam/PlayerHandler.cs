@@ -20,7 +20,7 @@ namespace Jákup_Viljam
 
         public void Start()
         {
-            _logger = Game.Container.Resolve<Core.Loggers.ILogger>();
+            _logger = Game.Container.Resolve<Core.Loggers.ILoggerFactory>().Create(this);
         }
 
         public void Update()

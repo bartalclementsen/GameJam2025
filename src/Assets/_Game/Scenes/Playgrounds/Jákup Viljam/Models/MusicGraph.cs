@@ -61,7 +61,7 @@ namespace Jákup_Viljam.Models
             }
 
             // print top to bottom
-            for (int line = _lines - 1; line >= 0; line--)
+            for (int line = 0; line < _lines; line++)
             {
                 _logger.Log(rows[line].ToString());
             }
