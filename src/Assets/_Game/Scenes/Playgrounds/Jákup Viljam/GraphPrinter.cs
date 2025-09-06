@@ -15,8 +15,8 @@ public class GraphPrinter : MonoBehaviour
             {
                 new(1, 8, 2, NodeType.Tangled, LineType.OnLine),
                 new(2, 4, 1, NodeType.Point, LineType.OnLine),
-                new(5, 5, 3, NodeType.Untangled, LineType.InBetweenLines),
-                new(8, 8, 0, NodeType.Tangled, LineType.InBetweenLines),
+                new(5, 5, 3, NodeType.Untangled, LineType.AboveLine),
+                new(8, 8, 0, NodeType.Tangled, LineType.BelowLine),
                 new(2, 4, 5, NodeType.Untangled, LineType.OnLine),
                 new(0, 5, 1, NodeType.Point, LineType.OnLine),
                 new(8, 8, 5, NodeType.Powerup, LineType.OnLine),

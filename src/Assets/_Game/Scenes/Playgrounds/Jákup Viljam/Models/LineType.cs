@@ -3,6 +3,7 @@
     public enum LineType
     {
         OnLine,
-        InBetweenLines,
+        AboveLine,
+        BelowLine,
     }
 }
