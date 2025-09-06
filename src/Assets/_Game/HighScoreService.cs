@@ -22,19 +22,19 @@ namespace _Game
     [Serializable]
     public class HighScores
     {
-        public List<HighScore> Scores = new List<HighScore>();
+        public List<HighScore> Scores = new();
     }
 
     public interface IHighScoreService
     {
-        public IEnumerable<HighScore> GetHighScores();
+        IEnumerable<HighScore> GetHighScores();
 
-        public void AddHighScore(string name, int kills, TimeSpan time);
+        void AddHighScore(string name, int kills, TimeSpan time);
     }
 
     public class HighScoreService : IHighScoreService
     {
-        private HighScores _highScores = new HighScores();
+        private readonly HighScores _highScores = new();
 
         private readonly IStorageService _storageService;
 
@@ -56,7 +56,7 @@ namespace _Game
 
         public void AddHighScore(string name, int kills, TimeSpan time)
         {
-            var timeString = $"{((int)time.TotalMinutes).ToString("00")}:{time.Seconds.ToString("00")}";
+            string timeString = $"{(int)time.TotalMinutes:00}:{time.Seconds:00}";
             if (_highScores.Scores.Any(hs => hs.Name == name && hs.Kills == kills && hs.Time == timeString))
             {
                 return; // Skip if already added

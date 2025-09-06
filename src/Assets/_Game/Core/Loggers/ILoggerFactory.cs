@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Core.Loggers
+﻿namespace Core.Loggers
 {
     public interface ILoggerFactory
     {

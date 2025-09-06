@@ -1,8 +1,8 @@
+using System;
+using _Game;
 using Core.Containers;
 using Core.Loggers;
 using Core.Mediators;
-using System;
-using _Game;
 using UnityEngine;
 
 public class Game
@@ -29,7 +29,7 @@ public class Game
 
     private static void Bootstrap()
     {
-        ContainerBuilder containerBuilder = new ContainerBuilder();
+        ContainerBuilder containerBuilder = new();
 
         containerBuilder.Register<ILoggerFactory, LoggerFactory>();
         containerBuilder.RegisterSingleton<IMessenger, Messenger>();

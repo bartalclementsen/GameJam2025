@@ -7,7 +7,7 @@ namespace Core.Mediators
     public class Messenger : IMessenger
     {
         private readonly IDictionary<Type, IDictionary<Guid, ISubscription>> _subscriptions = new Dictionary<Type, IDictionary<Guid, ISubscription>>();
-        private readonly object _theLock = new object();
+        private readonly object _theLock = new();
 
         /* ----------------------------------------------------------------------------  */
         /*                                PUBLIC METHODS                                 */
@@ -15,7 +15,9 @@ namespace Core.Mediators
         public void Publish(IMessage message)
         {
             if (message == null)
+            {
                 throw new ArgumentNullException(nameof(message));
+            }
 
             Type messageType = message.GetType();
 
@@ -39,7 +41,9 @@ namespace Core.Mediators
         public ISubscriptionToken Subscribe<TMessage>(Action<TMessage> deliveryAction) where TMessage : IMessage
         {
             if (deliveryAction == null)
+            {
                 throw new ArgumentNullException(nameof(deliveryAction));
+            }
 
             //Create the subscription
             Type messageType = typeof(TMessage);

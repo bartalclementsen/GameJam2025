@@ -1,19 +1,18 @@
-using Core.Loggers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class StartSceneHandler : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         Game.Container.Resolve<Core.Loggers.ILoggerFactory>().Create(this).Log("StartSceneHandler started");
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+
     }
 
     public void StartButtonClicked()

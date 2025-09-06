@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Jákup_Viljam
@@ -25,10 +20,14 @@ namespace Jákup_Viljam
         public void Update()
         {
             if (Keyboard.current.upArrowKey.wasPressedThisFrame)
+            {
                 HandleInput(+1);
+            }
 
             if (Keyboard.current.downArrowKey.wasPressedThisFrame)
+            {
                 HandleInput(-1);
+            }
         }
 
         public void TryMoveVertical(int direction)
