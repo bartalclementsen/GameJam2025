@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 
 namespace Jákup_Viljam.Models
 {
     public class GraphBuilder
     {
+        private static readonly System.Random _rng = new();
+
         public static MusicGraph BuildGraph(GraphStructure structure)
         {
             List<MusicNode> nodes = new();
@@ -16,7 +19,7 @@ namespace Jákup_Viljam.Models
                 {
                     for (int line = 0; line < structure.Lines; line++)
                     {
-                        nodes.Add(new MusicNode(bar, beat, line, NodeType.Nothing, LineType.OnLine));
+                        nodes.Add(new MusicNode(bar, beat, line, NodeType.Nothing));
                     }
                 }
             }
@@ -28,10 +31,15 @@ namespace Jákup_Viljam.Models
                 if (node != null)
                 {
                     node.Type = n.Type;
+                    if (node.Type == NodeType.Tangled)
+                    {
+                        Array values = Enum.GetValues(typeof(LineType));
+                        node.LineType = (LineType)values.GetValue(_rng.Next(values.Length))!;
+                    }
                 }
             }
 
-            return new MusicGraph(nodes, structure.Bars, structure.BeatsPerBar, structure.Lines);
+            return new MusicGraph(structure, nodes, structure.Bars, structure.BeatsPerBar, structure.Lines);
         }
     }
 }

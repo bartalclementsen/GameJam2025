@@ -10,21 +10,13 @@ namespace Jákup_Viljam
 {
     public class JVDGameHandler : MonoBehaviour
     {
+        public bool IsGameOver { get; private set; }
         public float PerfectWindowMs = 50f;
         public float GoodWindowMs = 100f;
-        public int CurrentBar = 0;
-        public int CurrentBeat = 0;
-        public int TotalBars;
-        public int BeatsPerBar;
-        public int Lines;
         public int Score = 0;
+        public MusicNode StartNode;
 
-        [SerializeField]
-        private RhythmHandler _rhythmHandler;
-        [SerializeField]
-        private PlayerHandler _playerHandler;
-
-        private bool _isGameOver;
+        public MusicGraph MusicGraph { get; private set; }
 
         private Core.Loggers.ILogger _logger;
 
@@ -32,8 +24,10 @@ namespace Jákup_Viljam
         {
             _logger = Game.Container.Resolve<Core.Loggers.ILoggerFactory>().Create(this);
 
-            MusicGraph graph = GenerateStaticMusicGraph();
-            graph.PrintStaff();
+            MusicGraph = GenerateStaticMusicGraph();
+            MusicGraph.PrintStaff();
+
+            StartNode = MusicGraph.GetNode(0, 0, 2);
         }
 
         public void Update()
@@ -41,49 +35,41 @@ namespace Jákup_Viljam
 
         }
 
-        public void OnRhytmTick()
+        public void OnPlayerAction(MusicNode node, float diffMs)
         {
-            if (_isGameOver == false)
-            {
-                AdvanceBeat();
-            }
-        }
+            int score = 0;
 
-        public void OnPlayerAction()
-        {
-            float now = Time.time * 1000f;
-            float diff = Mathf.Abs(now - _rhythmHandler.NextTickTimeMs());
-
-            if (diff <= PerfectWindowMs)
+            if (diffMs <= PerfectWindowMs)
             {
-                Score += 100;
+                score += 100;
             }
-            else if (diff <= GoodWindowMs)
+            else if (diffMs <= GoodWindowMs)
             {
-                Score += 50;
+                score += 50;
             }
             else
             {
-                Score += 10;
+                score += 5;
             }
 
-            _logger?.Log($"Accuracy {diff:F0}ms, Score {Score}");
-        }
-
-        private void AdvanceBeat()
-        {
-            CurrentBeat++;
-            if (CurrentBeat >= BeatsPerBar)
+            switch (node.Type)
             {
-                CurrentBeat = 0;
-                CurrentBar++;
+                case NodeType.Untangled:
+                    score -= 100; // penalty
+                    break;
+                case NodeType.Point:
+                    score += 50;
+                    break;
+                case NodeType.Tangled:
+                    score += 100; // reward
+                    break;
+                case NodeType.Powerup:
+                    // TODO: handle later
+                    break;
             }
 
-            if (CurrentBar >= TotalBars)
-            {
-                _logger?.Log("Song finished!");
-                _isGameOver = true;
-            }
+            Score += score;
+            _logger?.Log($"Hit node {node.Bar}/{node.Beat}/{node.Line} → Score {score} → Total {Score}");
         }
 
         private MusicGraph GenerateStaticMusicGraph()
@@ -96,183 +82,183 @@ namespace Jákup_Viljam
                 SpecialNodes = new List<MusicNode>
                 {
                     //0-3
-                    new(0, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(0, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(0, 0, 4, NodeType.Untangled, LineType.OnLine),
-                    new(0, 4, 2, NodeType.Tangled, LineType.OnLine),
-                    new(0, 2, 0, NodeType.Untangled, LineType.OnLine),
-                    new(0, 4, 0, NodeType.Untangled, LineType.OnLine),
-                    new(0, 4, 1, NodeType.Untangled, LineType.OnLine),
-                    new(0, 6, 2, NodeType.Untangled, LineType.OnLine), 
+                    new(0, 0, 2, NodeType.Untangled),
+                    new(0, 0, 3, NodeType.Untangled),
+                    new(0, 0, 4, NodeType.Untangled),
+                    new(4, 4, 2, NodeType.Tangled),
+                    new(2, 2, 0, NodeType.Untangled),
+                    new(4, 4, 0, NodeType.Untangled),
+                    new(4, 4, 1, NodeType.Untangled),
+                    new(6, 6, 2, NodeType.Untangled), 
 
-                    new(1, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(1, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(1, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(1, 2, 2, NodeType.Untangled, LineType.OnLine),
-                    new(1, 4, 0, NodeType.Untangled, LineType.OnLine),
-                    new(1, 4, 0, NodeType.Untangled, LineType.OnLine),
-                    new(1, 4, 3, NodeType.Tangled, LineType.OnLine), 
-                    new(1, 7, 1, NodeType.Untangled, LineType.OnLine),
+                    new(1, 1, 0, NodeType.Untangled),
+                    new(1, 0, 1, NodeType.Untangled),
+                    new(1, 0, 2, NodeType.Untangled),
+                    new(1, 2, 2, NodeType.Untangled),
+                    new(1, 4, 0, NodeType.Untangled),
+                    new(1, 4, 0, NodeType.Untangled),
+                    new(1, 4, 3, NodeType.Tangled), 
+                    new(1, 7, 1, NodeType.Untangled),
 
-                    new(2, 0, 0, NodeType.Point, LineType.OnLine),
-                    new(2, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(2, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(2, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(2, 2, 0, NodeType.Untangled, LineType.OnLine),
-                    new(2, 4, 4, NodeType.Tangled, LineType.OnLine),
-                    new(2, 4, 1, NodeType.Untangled, LineType.OnLine),
-                    new(2, 6, 2, NodeType.Untangled, LineType.OnLine), 
-                    new(2, 7, 2, NodeType.Point, LineType.OnLine), 
+                    new(2, 0, 0, NodeType.Point),
+                    new(2, 0, 1, NodeType.Untangled),
+                    new(2, 0, 2, NodeType.Untangled),
+                    new(2, 0, 3, NodeType.Untangled),
+                    new(2, 2, 0, NodeType.Untangled),
+                    new(2, 4, 4, NodeType.Tangled),
+                    new(2, 4, 1, NodeType.Untangled),
+                    new(2, 6, 2, NodeType.Untangled), 
+                    new(2, 7, 2, NodeType.Point), 
 
-                    new(3, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(3, 0, 1, NodeType.Tangled, LineType.OnLine),
-                    new(3, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(3, 0, 4, NodeType.Untangled, LineType.OnLine),
-                    new(3, 4, 1, NodeType.Untangled, LineType.OnLine),
-                    new(3, 4, 2, NodeType.Untangled, LineType.OnLine),
-                    new(3, 6, 0, NodeType.Untangled, LineType.OnLine),
-                    new(3, 7, 0, NodeType.Untangled, LineType.OnLine),
+                    new(3, 0, 2, NodeType.Untangled),
+                    new(3, 0, 1, NodeType.Tangled),
+                    new(3, 0, 3, NodeType.Untangled),
+                    new(3, 0, 4, NodeType.Untangled),
+                    new(3, 4, 1, NodeType.Untangled),
+                    new(3, 4, 2, NodeType.Untangled),
+                    new(3, 6, 0, NodeType.Untangled),
+                    new(3, 7, 0, NodeType.Untangled),
 
 
                     //4-7
-                    new(4, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(4, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(4, 0, 4, NodeType.Untangled, LineType.OnLine),
-                    new(4, 4, 2, NodeType.Tangled, LineType.OnLine),
-                    new(4, 2, 0, NodeType.Untangled, LineType.OnLine),
-                    new(4, 4, 0, NodeType.Untangled, LineType.OnLine),
-                    new(4, 4, 1, NodeType.Untangled, LineType.OnLine),
-                    new(4, 6, 2, NodeType.Untangled, LineType.OnLine),
+                    new(4, 0, 2, NodeType.Untangled),
+                    new(4, 0, 3, NodeType.Untangled),
+                    new(4, 0, 4, NodeType.Untangled),
+                    new(4, 4, 2, NodeType.Tangled),
+                    new(4, 2, 0, NodeType.Untangled),
+                    new(4, 4, 0, NodeType.Untangled),
+                    new(4, 4, 1, NodeType.Untangled),
+                    new(4, 6, 2, NodeType.Untangled),
 
-                    new(5, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(5, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(5, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(5, 2, 2, NodeType.Untangled, LineType.OnLine),
-                    new(5, 4, 0, NodeType.Untangled, LineType.OnLine),
-                    new(5, 4, 0, NodeType.Untangled, LineType.OnLine),
-                    new(5, 4, 3, NodeType.Tangled, LineType.OnLine),
-                    new(5, 7, 1, NodeType.Untangled, LineType.OnLine),
+                    new(5, 0, 0, NodeType.Untangled),
+                    new(5, 0, 1, NodeType.Untangled),
+                    new(5, 0, 2, NodeType.Untangled),
+                    new(5, 2, 2, NodeType.Untangled),
+                    new(5, 4, 0, NodeType.Untangled),
+                    new(5, 4, 0, NodeType.Untangled),
+                    new(5, 4, 3, NodeType.Tangled),
+                    new(5, 7, 1, NodeType.Untangled),
 
-                    new(6, 0, 0, NodeType.Point, LineType.OnLine),
-                    new(6, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(6, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(6, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(6, 2, 0, NodeType.Untangled, LineType.OnLine),
-                    new(6, 4, 4, NodeType.Tangled, LineType.OnLine),
-                    new(6, 4, 1, NodeType.Untangled, LineType.OnLine),
-                    new(6, 6, 2, NodeType.Untangled, LineType.OnLine),
-                    new(6, 7, 2, NodeType.Point, LineType.OnLine),
+                    new(6, 0, 0, NodeType.Point),
+                    new(6, 0, 1, NodeType.Untangled),
+                    new(6, 0, 2, NodeType.Untangled),
+                    new(6, 0, 3, NodeType.Untangled),
+                    new(6, 2, 0, NodeType.Untangled),
+                    new(6, 4, 4, NodeType.Tangled),
+                    new(6, 4, 1, NodeType.Untangled),
+                    new(6, 6, 2, NodeType.Untangled),
+                    new(6, 7, 2, NodeType.Point),
 
-                    new(7, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(7, 0, 1, NodeType.Tangled, LineType.OnLine),
-                    new(7, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(7, 0, 4, NodeType.Untangled, LineType.OnLine),
-                    new(7, 5, 1, NodeType.Untangled, LineType.OnLine),
-                    new(7, 5, 2, NodeType.Untangled, LineType.OnLine),
-                    new(7, 6, 0, NodeType.Untangled, LineType.OnLine),
-                    new(7, 7, 0, NodeType.Point, LineType.OnLine),
+                    new(7, 0, 2, NodeType.Untangled),
+                    new(7, 0, 1, NodeType.Tangled),
+                    new(7, 0, 3, NodeType.Untangled),
+                    new(7, 0, 4, NodeType.Untangled),
+                    new(7, 5, 1, NodeType.Untangled),
+                    new(7, 5, 2, NodeType.Untangled),
+                    new(7, 6, 0, NodeType.Untangled),
+                    new(7, 7, 0, NodeType.Point),
 
                     //8-11
-                    new(8, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(8, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(8, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(8, 0, 4, NodeType.Untangled, LineType.OnLine),
-                    new(8, 2, 4, NodeType.Untangled, LineType.OnLine),
-                    new(8, 3, 0, NodeType.Untangled, LineType.OnLine),
-                    new(8, 3, 4, NodeType.Untangled, LineType.OnLine),
-                    new(8, 5, 0, NodeType.Untangled, LineType.OnLine),
-                    new(8, 5, 1, NodeType.Untangled, LineType.OnLine),
-                    new(8, 6, 1, NodeType.Untangled, LineType.OnLine),
-                    new(8, 7, 0, NodeType.Untangled, LineType.OnLine),
-                    new(8, 7, 1, NodeType.Untangled, LineType.OnLine),
+                    new(8, 0, 0, NodeType.Untangled),
+                    new(8, 0, 2, NodeType.Untangled),
+                    new(8, 0, 3, NodeType.Untangled),
+                    new(8, 0, 4, NodeType.Untangled),
+                    new(8, 2, 4, NodeType.Untangled),
+                    new(8, 3, 0, NodeType.Untangled),
+                    new(8, 3, 4, NodeType.Untangled),
+                    new(8, 5, 0, NodeType.Untangled),
+                    new(8, 5, 1, NodeType.Untangled),
+                    new(8, 6, 1, NodeType.Untangled),
+                    new(8, 7, 0, NodeType.Untangled),
+                    new(8, 7, 1, NodeType.Untangled),
 
-                    new(9, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(9, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(9, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(9, 1, 0, NodeType.Untangled, LineType.OnLine),
-                    new(9, 2, 2, NodeType.Untangled, LineType.OnLine),
-                    new(9, 3, 0, NodeType.Untangled, LineType.OnLine),
-                    new(9, 4, 2, NodeType.Untangled, LineType.OnLine),
-                    new(9, 5, 0, NodeType.Untangled, LineType.OnLine),
-                    new(9, 5, 3, NodeType.Untangled, LineType.OnLine),
-                    new(9, 6, 0, NodeType.Untangled, LineType.OnLine),
+                    new(9, 0, 0, NodeType.Untangled),
+                    new(9, 0, 1, NodeType.Untangled),
+                    new(9, 0, 2, NodeType.Untangled),
+                    new(9, 1, 0, NodeType.Untangled),
+                    new(9, 2, 2, NodeType.Untangled),
+                    new(9, 3, 0, NodeType.Untangled),
+                    new(9, 4, 2, NodeType.Untangled),
+                    new(9, 5, 0, NodeType.Untangled),
+                    new(9, 5, 3, NodeType.Untangled),
+                    new(9, 6, 0, NodeType.Untangled),
 
-                    new(10, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 3, NodeType.Untangled, LineType.OnLine),
+                    new(10, 0, 1, NodeType.Untangled),
+                    new(10, 0, 2, NodeType.Untangled),
+                    new(10, 0, 3, NodeType.Untangled),
+                    new(10, 0, 0, NodeType.Untangled),
+                    new(10, 0, 1, NodeType.Untangled),
+                    new(10, 0, 0, NodeType.Untangled),
+                    new(10, 0, 1, NodeType.Untangled),
+                    new(10, 0, 2, NodeType.Untangled),
+                    new(10, 0, 0, NodeType.Untangled),
+                    new(10, 0, 0, NodeType.Untangled),
+                    new(10, 0, 3, NodeType.Untangled),
 
-                    new(11, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(11, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(11, 0, 4, NodeType.Untangled, LineType.OnLine),
-                    new(11, 1, 0, NodeType.Untangled, LineType.OnLine),
-                    new(11, 2, 4, NodeType.Untangled, LineType.OnLine),
-                    new(11, 3, 4, NodeType.Untangled, LineType.OnLine),
-                    new(11, 4, 0, NodeType.Untangled, LineType.OnLine),
-                    new(11, 4, 4, NodeType.Untangled, LineType.OnLine),
-                    new(11, 5, 0, NodeType.Untangled, LineType.OnLine),
-                    new(11, 6, 0, NodeType.Untangled, LineType.OnLine),
-                    new(11, 6, 1, NodeType.Untangled, LineType.OnLine),
-                    new(11, 6, 2, NodeType.Untangled, LineType.OnLine),
-                    new(11, 6, 3, NodeType.Untangled, LineType.OnLine),
+                    new(11, 0, 2, NodeType.Untangled),
+                    new(11, 0, 3, NodeType.Untangled),
+                    new(11, 0, 4, NodeType.Untangled),
+                    new(11, 1, 0, NodeType.Untangled),
+                    new(11, 2, 4, NodeType.Untangled),
+                    new(11, 3, 4, NodeType.Untangled),
+                    new(11, 4, 0, NodeType.Untangled),
+                    new(11, 4, 4, NodeType.Untangled),
+                    new(11, 5, 0, NodeType.Untangled),
+                    new(11, 6, 0, NodeType.Untangled),
+                    new(11, 6, 1, NodeType.Untangled),
+                    new(11, 6, 2, NodeType.Untangled),
+                    new(11, 6, 3, NodeType.Untangled),
 
                     //12-15
-                    new(8, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(8, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(8, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(8, 0, 4, NodeType.Untangled, LineType.OnLine),
-                    new(8, 2, 4, NodeType.Untangled, LineType.OnLine),
-                    new(8, 3, 0, NodeType.Untangled, LineType.OnLine),
-                    new(8, 3, 4, NodeType.Untangled, LineType.OnLine),
-                    new(8, 5, 0, NodeType.Untangled, LineType.OnLine),
-                    new(8, 5, 1, NodeType.Untangled, LineType.OnLine),
-                    new(8, 6, 1, NodeType.Untangled, LineType.OnLine),
-                    new(8, 7, 0, NodeType.Untangled, LineType.OnLine),
-                    new(8, 7, 1, NodeType.Untangled, LineType.OnLine),
+                    new(8, 0, 0, NodeType.Untangled),
+                    new(8, 0, 2, NodeType.Untangled),
+                    new(8, 0, 3, NodeType.Untangled),
+                    new(8, 0, 4, NodeType.Untangled),
+                    new(8, 2, 4, NodeType.Untangled),
+                    new(8, 3, 0, NodeType.Untangled),
+                    new(8, 3, 4, NodeType.Untangled),
+                    new(8, 5, 0, NodeType.Untangled),
+                    new(8, 5, 1, NodeType.Untangled),
+                    new(8, 6, 1, NodeType.Untangled),
+                    new(8, 7, 0, NodeType.Untangled),
+                    new(8, 7, 1, NodeType.Untangled),
 
-                    new(9, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(9, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(9, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(9, 1, 0, NodeType.Untangled, LineType.OnLine),
-                    new(9, 2, 2, NodeType.Untangled, LineType.OnLine),
-                    new(9, 3, 0, NodeType.Untangled, LineType.OnLine),
-                    new(9, 4, 2, NodeType.Untangled, LineType.OnLine),
-                    new(9, 5, 0, NodeType.Untangled, LineType.OnLine),
-                    new(9, 5, 3, NodeType.Untangled, LineType.OnLine),
-                    new(9, 6, 0, NodeType.Untangled, LineType.OnLine),
+                    new(9, 0, 0, NodeType.Untangled),
+                    new(9, 0, 1, NodeType.Untangled),
+                    new(9, 0, 2, NodeType.Untangled),
+                    new(9, 1, 0, NodeType.Untangled),
+                    new(9, 2, 2, NodeType.Untangled),
+                    new(9, 3, 0, NodeType.Untangled),
+                    new(9, 4, 2, NodeType.Untangled),
+                    new(9, 5, 0, NodeType.Untangled),
+                    new(9, 5, 3, NodeType.Untangled),
+                    new(9, 6, 0, NodeType.Untangled),
 
-                    new(10, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 1, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 0, NodeType.Untangled, LineType.OnLine),
-                    new(10, 0, 3, NodeType.Untangled, LineType.OnLine),
+                    new(10, 0, 1, NodeType.Untangled),
+                    new(10, 0, 2, NodeType.Untangled),
+                    new(10, 0, 3, NodeType.Untangled),
+                    new(10, 0, 0, NodeType.Untangled),
+                    new(10, 0, 1, NodeType.Untangled),
+                    new(10, 0, 0, NodeType.Untangled),
+                    new(10, 0, 1, NodeType.Untangled),
+                    new(10, 0, 2, NodeType.Untangled),
+                    new(10, 0, 0, NodeType.Untangled),
+                    new(10, 0, 0, NodeType.Untangled),
+                    new(10, 0, 3, NodeType.Untangled),
 
-                    new(11, 0, 2, NodeType.Untangled, LineType.OnLine),
-                    new(11, 0, 3, NodeType.Untangled, LineType.OnLine),
-                    new(11, 0, 4, NodeType.Untangled, LineType.OnLine),
-                    new(11, 1, 0, NodeType.Untangled, LineType.OnLine),
-                    new(11, 2, 4, NodeType.Untangled, LineType.OnLine),
-                    new(11, 3, 4, NodeType.Untangled, LineType.OnLine),
-                    new(11, 4, 0, NodeType.Untangled, LineType.OnLine),
-                    new(11, 4, 4, NodeType.Untangled, LineType.OnLine),
-                    new(11, 5, 0, NodeType.Untangled, LineType.OnLine),
-                    new(11, 6, 0, NodeType.Untangled, LineType.OnLine),
-                    new(11, 6, 1, NodeType.Untangled, LineType.OnLine),
-                    new(11, 6, 2, NodeType.Untangled, LineType.OnLine),
-                    new(11, 6, 3, NodeType.Untangled, LineType.OnLine),
+                    new(11, 0, 2, NodeType.Untangled),
+                    new(11, 0, 3, NodeType.Untangled),
+                    new(11, 0, 4, NodeType.Untangled),
+                    new(11, 1, 0, NodeType.Untangled),
+                    new(11, 2, 4, NodeType.Untangled),
+                    new(11, 3, 4, NodeType.Untangled),
+                    new(11, 4, 0, NodeType.Untangled),
+                    new(11, 4, 4, NodeType.Untangled),
+                    new(11, 5, 0, NodeType.Untangled),
+                    new(11, 6, 0, NodeType.Untangled),
+                    new(11, 6, 1, NodeType.Untangled),
+                    new(11, 6, 2, NodeType.Untangled),
+                    new(11, 6, 3, NodeType.Untangled),
 
                 }
             };
