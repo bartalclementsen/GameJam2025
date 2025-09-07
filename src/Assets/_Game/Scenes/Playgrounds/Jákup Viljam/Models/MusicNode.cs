@@ -19,14 +19,13 @@ namespace Jákup_Viljam.Models
 
         private readonly Core.Loggers.ILogger _logger;
 
-        public MusicNode(int bar, int beat, int line, NodeType type, LineType lineType)
+        public MusicNode(int bar, int beat, int line, NodeType type)
         {
             _logger = Game.Container.Resolve<ILoggerFactory>().Create(this);
             Bar = bar;
             Beat = beat;
             Line = line;
             Type = type;
-            LineType = lineType;
         }
 
         public void PrintInfo()

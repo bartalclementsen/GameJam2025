@@ -9,16 +9,18 @@ namespace Jákup_Viljam.Models
 
     public class MusicGraph
     {
+        public readonly GraphStructure GraphStructure = new();
         private readonly Dictionary<(int, int, int), MusicNode> _nodes = new();
         private readonly int _totalBars;
         private readonly int _beatsPerBar;
         private readonly int _lines;
         private readonly Core.Loggers.ILogger _logger;
 
-        public MusicGraph(List<MusicNode> inputNodes, int totalBars, int beatsPerBar, int lines, bool connectAdjacentLines = true)
+        public MusicGraph(GraphStructure graphStructure, List<MusicNode> inputNodes, int totalBars, int beatsPerBar, int lines, bool connectAdjacentLines = true)
         {
             _logger = Game.Container.Resolve<ILoggerFactory>().Create(this);
 
+            GraphStructure = graphStructure;
             _totalBars = totalBars;
             _beatsPerBar = beatsPerBar;
             _lines = lines;
