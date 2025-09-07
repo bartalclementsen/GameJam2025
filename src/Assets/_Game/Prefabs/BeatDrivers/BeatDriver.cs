@@ -22,12 +22,12 @@ public class BeatDriver : MonoBehaviour
 
     public double SPB { get; private set; }                     // seconds per (subdivided) beat
 
-    void Awake()
+    private void Awake()
     {
         SPB = 60.0 / bpm / subdivision;
     }
 
-    void Start()
+    private void Start()
     {
         // Schedule start slightly in the future for stable timing
         SongStartDsp = AudioSettings.dspTime + 0.15;
@@ -36,9 +36,12 @@ public class BeatDriver : MonoBehaviour
         NextTickDsp = SongStartDsp + firstBeatOffset + SPB; // first tick after start
     }
 
-    void Update()
+    private void Update()
     {
-        if (!source.isPlaying) return;
+        if (!source.isPlaying)
+        {
+            return;
+        }
 
         double dsp = AudioSettings.dspTime;
 
@@ -61,10 +64,14 @@ public class BeatDriver : MonoBehaviour
     {
         // Re-align nextTickDsp to the current song position
         source.UnPause();
-        double songPos = (AudioSettings.dspTime - SongStartDsp) - firstBeatOffset;
-        if (songPos < 0) songPos = 0;
+        double songPos = AudioSettings.dspTime - SongStartDsp - firstBeatOffset;
+        if (songPos < 0)
+        {
+            songPos = 0;
+        }
+
         double ticksPassed = Math.Floor(songPos / SPB);
-        NextTickDsp = SongStartDsp + firstBeatOffset + (ticksPassed + 1) * SPB;
+        NextTickDsp = SongStartDsp + firstBeatOffset + ((ticksPassed + 1) * SPB);
     }
 
     public bool IsPlaying()
