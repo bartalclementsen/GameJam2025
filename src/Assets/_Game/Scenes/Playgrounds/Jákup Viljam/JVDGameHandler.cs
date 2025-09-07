@@ -85,7 +85,7 @@ namespace Jákup_Viljam
                     new(2, 2, 0, NodeType.Untangled),
                     new(4, 4, 0, NodeType.Untangled),
                     new(4, 4, 1, NodeType.Untangled),
-                    new(6, 6, 2, NodeType.Untangled), 
+                    new(6, 6, 2, NodeType.Untangled),
 
                     new(1, 1, 0, NodeType.Untangled),
                     new(1, 0, 1, NodeType.Untangled),
@@ -93,7 +93,7 @@ namespace Jákup_Viljam
                     new(1, 2, 2, NodeType.Untangled),
                     new(1, 4, 0, NodeType.Untangled),
                     new(1, 4, 0, NodeType.Untangled),
-                    new(1, 4, 3, NodeType.Tangled), 
+                    new(1, 4, 3, NodeType.Tangled),
                     new(1, 7, 1, NodeType.Untangled),
 
                     new(2, 0, 0, NodeType.Point),
@@ -103,8 +103,8 @@ namespace Jákup_Viljam
                     new(2, 2, 0, NodeType.Untangled),
                     new(2, 4, 4, NodeType.Tangled),
                     new(2, 4, 1, NodeType.Untangled),
-                    new(2, 6, 2, NodeType.Untangled), 
-                    new(2, 7, 2, NodeType.Point), 
+                    new(2, 6, 2, NodeType.Untangled),
+                    new(2, 7, 2, NodeType.Point),
 
                     new(3, 0, 2, NodeType.Untangled),
                     new(3, 0, 1, NodeType.Tangled),

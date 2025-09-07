@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace Jákup_Viljam
@@ -21,7 +16,7 @@ namespace Jákup_Viljam
         [SerializeField]
         private float _colorTransitionSpeed = 2f;
 
-        bool isStarted = false;
+        private bool isStarted = false;
 
         private float _currentTime;
 
@@ -38,7 +33,7 @@ namespace Jákup_Viljam
 
         public void Update()
         {
-            if(isStarted == false)
+            if (isStarted == false)
             {
                 return;
             }

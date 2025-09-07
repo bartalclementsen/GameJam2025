@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Jákup_Viljam.Models;
+﻿using Jákup_Viljam.Models;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -48,7 +43,10 @@ namespace Jákup_Viljam
 
         public void AutoAdvance()
         {
-            if (CurrentNode == null) return;
+            if (CurrentNode == null)
+            {
+                return;
+            }
 
             // Default move: take the "same line" node if it exists
             MusicNode auto = CurrentNode.NextNodes.Find(n => n.Line == CurrentNode.Line);
@@ -67,7 +65,10 @@ namespace Jákup_Viljam
 
         private void HandleInput(int direction)
         {
-            if (CurrentNode == null) return;
+            if (CurrentNode == null)
+            {
+                return;
+            }
 
             float now = Time.time * 1000f;
             float diff = Mathf.Abs(now - _rhythmHandler.NextTickTimeMs());

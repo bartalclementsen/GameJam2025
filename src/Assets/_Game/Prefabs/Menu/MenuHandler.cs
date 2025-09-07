@@ -1,12 +1,8 @@
-using System;
 using _Game;
 using TMPro;
-using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class MenuHandler : MonoBehaviour
 {
@@ -18,16 +14,16 @@ public class MenuHandler : MonoBehaviour
     [SerializeField] private TMP_InputField _nameTextField;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
-        
+
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        var escapeClicked = Keyboard.current.escapeKey.wasPressedThisFrame;
-        if(escapeClicked)
+        bool escapeClicked = Keyboard.current.escapeKey.wasPressedThisFrame;
+        if (escapeClicked)
         {
             ShowPauseMenu();
         }
@@ -71,8 +67,8 @@ public class MenuHandler : MonoBehaviour
 
     public void SaveHighScore()
     {
-        var name = _nameTextField.text;
-        if(string.IsNullOrWhiteSpace(name))
+        string name = _nameTextField.text;
+        if (string.IsNullOrWhiteSpace(name))
         {
             name = "Unknown";
         }

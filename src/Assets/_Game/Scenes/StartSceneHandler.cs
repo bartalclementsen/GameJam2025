@@ -6,18 +6,18 @@ using UnityEngine.SceneManagement;
 
 public class StartSceneHandler : MonoBehaviour
 {
-    [SerializeField] GameObject _mainMenu;
-    [SerializeField] GameObject _highScoreMenu;
-    [SerializeField] TextMeshProUGUI _highScoreText;
+    [SerializeField] private GameObject _mainMenu;
+    [SerializeField] private GameObject _highScoreMenu;
+    [SerializeField] private TextMeshProUGUI _highScoreText;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
         Game.Container.Resolve<Core.Loggers.ILoggerFactory>().Create(this).Log("StartSceneHandler started");
-        var _highScoreService = Game.Container.Resolve<_Game.IHighScoreService>();
+        _Game.IHighScoreService _highScoreService = Game.Container.Resolve<_Game.IHighScoreService>();
 
-        var highScores = _highScoreService.GetHighScores();
-        StringBuilder sb = new StringBuilder();
+        System.Collections.Generic.IEnumerable<_Game.HighScore> highScores = _highScoreService.GetHighScores();
+        StringBuilder sb = new();
         if (highScores.Any() == false)
         {
             sb.AppendLine("No high scores");
@@ -26,8 +26,8 @@ public class StartSceneHandler : MonoBehaviour
         {
             for (int i = 0; i < highScores.Count(); i++)
             {
-                var highScore = highScores.ElementAt(i);
-                sb.AppendLine($"{(i + 1).ToString("00")}. {highScore.Name} Percent {highScore.Percent}, Score {highScore.Score} ({highScore.Date}) ");
+                _Game.HighScore highScore = highScores.ElementAt(i);
+                sb.AppendLine($"{i + 1:00}. {highScore.Name} Percent {highScore.Percent}, Score {highScore.Score} ({highScore.Date}) ");
             }
         }
 
