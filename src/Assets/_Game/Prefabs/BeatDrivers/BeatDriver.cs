@@ -27,7 +27,12 @@ public class BeatDriver : MonoBehaviour
         SPB = 60.0 / bpm / subdivision;
     }
 
-    private void Start()
+    //private void Start()
+    //{
+    //    StartPlaying();   
+    //}
+
+    public void StartPlaying()
     {
         // Schedule start slightly in the future for stable timing
         SongStartDsp = AudioSettings.dspTime + 0.15;
