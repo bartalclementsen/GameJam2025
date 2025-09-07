@@ -11,15 +11,32 @@ public class HighScoreHandler : MonoBehaviour
     private int _increments = 0;
     private int _score = 0;
 
+    private int errorsAdded;
+
+    private int errorsFixed;
+
+    private int _initialErros;
+
+    public void SetInitialErrors(int initialErrors)
+    {
+        _initialErros = initialErrors;
+        UpdateUI();
+    }
+
     public void AddScore()
     {
+        errorsFixed++;
+
         _increments++;
         _score += 1;
-        _textMeshPro.SetText($"Score: {GetScore()}%");
+
+        UpdateUI();
     }
 
     public void RemoveScore()
     {
+        errorsAdded++;
+
         _increments++;
         _score -= 1;
 
@@ -28,16 +45,27 @@ public class HighScoreHandler : MonoBehaviour
             _score = 0;
         }
 
-        _textMeshPro.SetText($"Score: {GetScore()}%");
+        UpdateUI();
     }
 
     public int GetScore()
     {
+        var percent = (float)errorsFixed / (_initialErros + errorsAdded) * 100;
+
+        return (int)Mathf.Round(percent);
+
         if (_increments == 0)
         {
             return 0;
         }
 
-        return (int)((Mathf.Min(Mathf.Max(0f, (float)_score / (float)_increments), 1f) * 100) + 0.5f);
+        return _initialErros;
+
+        //return (int)((Mathf.Min(Mathf.Max(0f, (float)_score / (float)_increments), 1f) * 100) + 0.5f);
+    }
+
+    private void UpdateUI()
+    {
+        _textMeshPro.SetText($"Score: {GetScore()}%");
     }
 }

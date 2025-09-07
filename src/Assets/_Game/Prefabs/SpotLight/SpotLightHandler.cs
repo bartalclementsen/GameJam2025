@@ -37,7 +37,6 @@ public class SpotLightHandler : MonoBehaviour
     private void Start()
     {
         _logger = Game.Container.Resolve<ILoggerFactory>().Create(this);
-        _logger.Log("SpotLightHandler started");
     }
 
     private void Awake()

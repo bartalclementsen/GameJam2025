@@ -21,17 +21,28 @@ namespace Jákup_Viljam
         [SerializeField]
         private float _colorTransitionSpeed = 2f;
 
+        bool isStarted = false;
+
         private float _currentTime;
 
         public void Start()
         {
-            _currentTime = _startTime;
-
             SetText();
+        }
+
+        public void StartTimer()
+        {
+            isStarted = true;
+            _currentTime = _startTime;
         }
 
         public void Update()
         {
+            if(isStarted == false)
+            {
+                return;
+            }
+
             if (_currentTime > 0)
             {
                 _currentTime -= Time.deltaTime;

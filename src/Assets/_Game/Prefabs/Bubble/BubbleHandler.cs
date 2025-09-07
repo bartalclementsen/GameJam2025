@@ -36,6 +36,14 @@ public class BubbleHandler : MonoBehaviour
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        // Apply initial
+        float initialScale = Random.Range(_circleMinScale, _circleMaxScale);
+        Vector3 localScale = _spriteRenderer.transform.localScale;
+        localScale.x = initialScale;
+        localScale.y = initialScale;
+        _spriteRenderer.transform.localScale = localScale;
+
+        _color.a = Random.Range(_minAlpha, _maxAlpha);
 
         // We don't care for y scale, as we want to scale the circle same in x- and y-axis
         _startScale = _spriteRenderer.transform.localScale.x;
@@ -43,10 +51,33 @@ public class BubbleHandler : MonoBehaviour
     }
 
     // Update is called once per frame
+    private bool alphaUpDirection = true;
+
     void Update()
     {
         ApplyScale();
-        _color.a = _maxAlpha - Mathf.PingPong(Time.time * _alphaChangeSpeed, _maxAlpha - _minAlpha);
+        var alpha = _color.a;
+        if(alphaUpDirection)
+        {
+            alpha += Time.deltaTime * _alphaChangeSpeed;
+            if(alpha >= _maxAlpha)
+            {
+                alpha = _maxAlpha;
+                alphaUpDirection = false;
+            }
+        }
+        else
+        {
+            alpha -= Time.deltaTime * _alphaChangeSpeed;
+            if(alpha <= _minAlpha)
+            {
+                alpha = _minAlpha;
+                alphaUpDirection = true;
+            }
+        }
+
+        //_color.a = _maxAlpha - Mathf.PingPong(Time.time * _alphaChangeSpeed, _maxAlpha - _minAlpha);
+        _color.a = alpha;
         _spriteRenderer.color = _color;
     }
 

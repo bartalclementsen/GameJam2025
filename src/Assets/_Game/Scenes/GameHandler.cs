@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Jákup_Viljam;
 using Jákup_Viljam.Models;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,10 +17,17 @@ public class GameHandler : MonoBehaviour
     [SerializeField] private GameObject _point;
     [SerializeField] private AudioSource _audioNormal;
     [SerializeField] private AudioSource _audioDistorted;
+    [SerializeField] private AudioSource _errorAudioSource;
     [SerializeField] private Camera _mainCamera;
     [SerializeField] private LineRenderer _scrubber;
     [SerializeField] private float _halfCycleDuration = 2f;
     [SerializeField] public BeatDriver beatDriver;
+
+    [SerializeField] public AudioClip correcting;
+    [SerializeField] public AudioClip missplacing;
+    [SerializeField] public HighScoreHandler highScoreHandler;
+    [SerializeField] public GameTimer gameTimer;
+    [SerializeField] public MenuHandler menuHandler;
 
     // Player
     [SerializeField] private GameObject _player;
@@ -43,6 +52,12 @@ public class GameHandler : MonoBehaviour
 
     private readonly int perFrame = 20;
 
+    private double _currentTickStartDsp = 0;
+
+    private bool _wasDownPressed = false;
+    private bool _wasUpPressed = false;
+    private bool _isMoving = false;
+
     /* ----------------------------------------------------------------------------  */
     /*                                   Lifecycle                                   */
     /* ----------------------------------------------------------------------------  */
@@ -64,6 +79,8 @@ public class GameHandler : MonoBehaviour
 
         _logger = Game.Container.Resolve<Core.Loggers.ILoggerFactory>().Create(this);
         _musicGraph = GenerateStaticMusicGraph();
+
+        highScoreHandler.SetInitialErrors(_musicGraph.AllNodes.Count(o => o.Type == NodeType.Tangled));
 
         _playerCurrentNode = _musicGraph.GetNode(0, 0, 0);
         _playerInitialNode = _playerCurrentNode;
@@ -89,31 +106,40 @@ public class GameHandler : MonoBehaviour
 
         beatDriver.SetDistoredSound(_audioDistorted);
         beatDriver.StartPlaying();
+        gameTimer.StartTimer();
     }
 
     // Update is called once per frame
     private void Update()
     {
-        HandScrubberMovement();
-    }
+        if (isPause)
+            return;
 
-    private void FixedUpdate()
-    {
         HandlerPlayerInputs();
+        HandScrubberMovement();
     }
 
     /* ----------------------------------------------------------------------------  */
     /*                                PRIVATE METHODS                                */
     /* ----------------------------------------------------------------------------  */
+    private bool isPause = false;
+
+    public void Pause()
+    {
+        isPause = true;
+        beatDriver.Pause();
+    }
+
+    public void Resume()
+    {
+        isPause = false;
+        beatDriver.Resume();
+    }
 
     private void HandleTick()
     {
         HandlePlayerMovement();
     }
-
-
-    //private int _lastTickRealign = 0;
-    private double _currentTickStartDsp = 0;
 
     private void HandScrubberMovement()
     {
@@ -156,11 +182,6 @@ public class GameHandler : MonoBehaviour
         }
     }
 
-
-    private bool _wasDownPressed = false;
-    private bool _wasUpPressed = false;
-    private bool _isMoving = false;
-
     private void HandlerPlayerInputs()
     {
         if (_isMoving == true)
@@ -168,8 +189,8 @@ public class GameHandler : MonoBehaviour
             return;
         }
 
-        bool isUpPressed = Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed;
-        bool isDownPressed = Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed;
+        bool isUpPressed = Keyboard.current.wKey.wasPressedThisFrame || Keyboard.current.upArrowKey.wasPressedThisFrame;
+        bool isDownPressed = Keyboard.current.sKey.wasPressedThisFrame || Keyboard.current.downArrowKey.wasPressedThisFrame;
 
         if (_wasUpPressed == false && isUpPressed)
         {
@@ -207,6 +228,13 @@ public class GameHandler : MonoBehaviour
             nextNode = _playerCurrentNode.RightNode;
         }
 
+        if(nextNode == null)
+        {
+            //Finished
+            Pause();
+            menuHandler.ShowFinishedMenu();
+        }
+
         // Update model
         _playerCurrentNode = nextNode;
 
@@ -223,22 +251,39 @@ public class GameHandler : MonoBehaviour
             _playerCurrentNode.Type = NodeType.Nothing;
             RenderNode(_playerCurrentNode);
 
-            // Play success sound
+            PlayCorrectingSound();
 
-            // Increment score
+            highScoreHandler.AddScore();
         }
         if (_playerCurrentNode.Type == NodeType.Untangled)
         {
             _playerCurrentNode.Type = NodeType.Tangled;
+
+            Array values = Enum.GetValues(typeof(LineType));
+            int index = UnityEngine.Random.Range(1, values.Length);
+            _playerCurrentNode.LineType = (LineType)values.GetValue(index);
+
             RenderNode(_playerCurrentNode);
 
-            // Play error sound
+            PlayMissplacingSound();
 
-            // dec Increment score
+            highScoreHandler.RemoveScore();
         }
     }
 
+    private void PlayCorrectingSound()
+    {
+        _errorAudioSource.Stop();
+        _errorAudioSource.clip = correcting;
+        _errorAudioSource.Play();
+    }
 
+    private void PlayMissplacingSound()
+    {
+        _errorAudioSource.Stop();
+        _errorAudioSource.clip = missplacing;
+        _errorAudioSource.Play();
+    }
 
     private void DrawPlayer()
     {
@@ -342,11 +387,11 @@ public class GameHandler : MonoBehaviour
                     new(0, 0, 2, NodeType.Untangled),
                     new(0, 0, 3, NodeType.Untangled),
                     new(0, 0, 4, NodeType.Untangled),
-                    new(4, 4, 2, NodeType.Tangled),
-                    new(2, 2, 0, NodeType.Untangled),
-                    new(4, 4, 0, NodeType.Untangled),
-                    new(4, 4, 1, NodeType.Untangled),
-                    new(6, 6, 2, NodeType.Untangled),
+                    new(0, 4, 2, NodeType.Tangled),
+                    new(0, 2, 0, NodeType.Untangled),
+                    new(0, 4, 0, NodeType.Untangled),
+                    new(0, 4, 1, NodeType.Untangled),
+                    new(0, 6, 2, NodeType.Untangled),
 
                     new(1, 1, 0, NodeType.Untangled),
                     new(1, 0, 1, NodeType.Untangled),
@@ -467,55 +512,55 @@ public class GameHandler : MonoBehaviour
                     new(11, 6, 3, NodeType.Untangled),
 
                     //12-15
-                    new(8, 0, 0, NodeType.Untangled),
-                    new(8, 0, 2, NodeType.Untangled),
-                    new(8, 0, 3, NodeType.Untangled),
-                    new(8, 0, 4, NodeType.Untangled),
-                    new(8, 2, 4, NodeType.Untangled),
-                    new(8, 3, 0, NodeType.Untangled),
-                    new(8, 3, 4, NodeType.Untangled),
-                    new(8, 5, 0, NodeType.Untangled),
-                    new(8, 5, 1, NodeType.Untangled),
-                    new(8, 6, 1, NodeType.Untangled),
-                    new(8, 7, 0, NodeType.Untangled),
-                    new(8, 7, 1, NodeType.Untangled),
+                    new(12, 0, 0, NodeType.Untangled),
+                    new(12, 0, 2, NodeType.Untangled),
+                    new(12, 0, 3, NodeType.Untangled),
+                    new(12, 0, 4, NodeType.Untangled),
+                    new(12, 2, 4, NodeType.Untangled),
+                    new(12, 3, 0, NodeType.Untangled),
+                    new(12, 3, 4, NodeType.Untangled),
+                    new(12, 5, 0, NodeType.Untangled),
+                    new(12, 5, 1, NodeType.Untangled),
+                    new(12, 6, 1, NodeType.Untangled),
+                    new(12, 7, 0, NodeType.Untangled),
+                    new(12, 7, 1, NodeType.Untangled),
 
-                    new(9, 0, 0, NodeType.Untangled),
-                    new(9, 0, 1, NodeType.Untangled),
-                    new(9, 0, 2, NodeType.Untangled),
-                    new(9, 1, 0, NodeType.Untangled),
-                    new(9, 2, 2, NodeType.Untangled),
-                    new(9, 3, 0, NodeType.Untangled),
-                    new(9, 4, 2, NodeType.Untangled),
-                    new(9, 5, 0, NodeType.Untangled),
-                    new(9, 5, 3, NodeType.Untangled),
-                    new(9, 6, 0, NodeType.Untangled),
+                    new(13, 0, 0, NodeType.Untangled),
+                    new(13, 0, 1, NodeType.Untangled),
+                    new(13, 0, 2, NodeType.Untangled),
+                    new(13, 1, 0, NodeType.Untangled),
+                    new(13, 2, 2, NodeType.Untangled),
+                    new(13, 3, 0, NodeType.Untangled),
+                    new(13, 4, 2, NodeType.Untangled),
+                    new(13, 5, 0, NodeType.Untangled),
+                    new(13, 5, 3, NodeType.Untangled),
+                    new(13, 6, 0, NodeType.Untangled),
 
-                    new(10, 0, 1, NodeType.Untangled),
-                    new(10, 0, 2, NodeType.Untangled),
-                    new(10, 0, 3, NodeType.Untangled),
-                    new(10, 0, 0, NodeType.Untangled),
-                    new(10, 0, 1, NodeType.Untangled),
-                    new(10, 0, 0, NodeType.Untangled),
-                    new(10, 0, 1, NodeType.Untangled),
-                    new(10, 0, 2, NodeType.Untangled),
-                    new(10, 0, 0, NodeType.Untangled),
-                    new(10, 0, 0, NodeType.Untangled),
-                    new(10, 0, 3, NodeType.Untangled),
+                    new(14, 0, 1, NodeType.Untangled),
+                    new(14, 0, 2, NodeType.Untangled),
+                    new(14, 0, 3, NodeType.Untangled),
+                    new(14, 0, 0, NodeType.Untangled),
+                    new(14, 0, 1, NodeType.Untangled),
+                    new(14, 0, 0, NodeType.Untangled),
+                    new(14, 0, 1, NodeType.Untangled),
+                    new(14, 0, 2, NodeType.Untangled),
+                    new(14, 0, 0, NodeType.Untangled),
+                    new(14, 0, 0, NodeType.Untangled),
+                    new(14, 0, 3, NodeType.Untangled),
 
-                    new(11, 0, 2, NodeType.Untangled),
-                    new(11, 0, 3, NodeType.Untangled),
-                    new(11, 0, 4, NodeType.Untangled),
-                    new(11, 1, 0, NodeType.Untangled),
-                    new(11, 2, 4, NodeType.Untangled),
-                    new(11, 3, 4, NodeType.Untangled),
-                    new(11, 4, 0, NodeType.Untangled),
-                    new(11, 4, 4, NodeType.Untangled),
-                    new(11, 5, 0, NodeType.Untangled),
-                    new(11, 6, 0, NodeType.Untangled),
-                    new(11, 6, 1, NodeType.Untangled),
-                    new(11, 6, 2, NodeType.Untangled),
-                    new(11, 6, 3, NodeType.Untangled),
+                    new(15, 0, 2, NodeType.Untangled),
+                    new(15, 0, 3, NodeType.Untangled),
+                    new(15, 0, 4, NodeType.Untangled),
+                    new(15, 1, 0, NodeType.Untangled),
+                    new(15, 2, 4, NodeType.Untangled),
+                    new(15, 3, 4, NodeType.Untangled),
+                    new(15, 4, 0, NodeType.Untangled),
+                    new(15, 4, 4, NodeType.Untangled),
+                    new(15, 5, 0, NodeType.Untangled),
+                    new(15, 6, 0, NodeType.Untangled),
+                    new(15, 6, 1, NodeType.Untangled),
+                    new(15, 6, 2, NodeType.Untangled),
+                    new(15, 6, 3, NodeType.Untangled),
 
                 }
         };
