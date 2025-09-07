@@ -357,6 +357,8 @@ MonoBehaviour:
   gameTimer: {fileID: 1947750436}
   menuHandler: {fileID: 1926670532}
   playerController: {fileID: 1038105065}
+  normalMusic: {fileID: 8300000, guid: 66dd82b74bb6feb459f976b7eee13ea3, type: 3}
+  randomMusic: {fileID: 8300000, guid: 724cf0b806467ae49956517686eeb0cc, type: 3}
   _player: {fileID: 1038105063}
   CurrentBar: 0
   CurrentBeat: 0
@@ -372,7 +374,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 6193f6587e7975f48813927f217a5a56, type: 3}
+  m_Resource: {fileID: 8300000, guid: 66dd82b74bb6feb459f976b7eee13ea3, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.8
   m_Pitch: 1

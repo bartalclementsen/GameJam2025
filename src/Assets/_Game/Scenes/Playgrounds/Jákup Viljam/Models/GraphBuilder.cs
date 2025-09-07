@@ -44,11 +44,11 @@ namespace Jákup_Viljam.Models
         public static MusicGraph BuildStaticStructure(GraphStructure structure)
         {
             // Generate all nodes
-            structure.SpecialNodes = GenerateSataicNotes();
+            structure.SpecialNodes = GenerateStaticNotes();
             return BuildGraph(structure);
         }
 
-        private static List<MusicNode> GenerateSataicNotes()
+        private static List<MusicNode> GenerateStaticNotes()
         {
             return new List<MusicNode>
                 {
@@ -308,7 +308,7 @@ namespace Jákup_Viljam.Models
             return path;
         }
 
-        private static void AssignPathTypes(List<MusicNode> path, double tangledChance = 0.4, double pointChance = 0.1)
+        private static void AssignPathTypes(List<MusicNode> path, double tangledChance = 0.24, double pointChance = 0.1)
         {
             Random rng = new();
 
@@ -327,7 +327,7 @@ namespace Jákup_Viljam.Models
             }
         }
 
-        private static void ScatterUntangled(MusicGraph graph, HashSet<MusicNode> pathNodes, double scatterChance = 0.35)
+        private static void ScatterUntangled(MusicGraph graph, HashSet<MusicNode> pathNodes, double scatterChance = 0.15)
         {
             Random rng = new();
 

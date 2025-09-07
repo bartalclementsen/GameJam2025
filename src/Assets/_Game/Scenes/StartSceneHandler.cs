@@ -1,5 +1,8 @@
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets._Game.Scenes.Playgrounds.Jákup_Viljam.Models;
+using Jákup_Viljam.Models;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -43,6 +46,27 @@ public class StartSceneHandler : MonoBehaviour
 
     public void StartButtonClicked()
     {
+        SceneData.Graph = GraphBuilder.BuildStaticStructure(new GraphStructure
+        {
+            Lines = 5,
+            BeatsPerBar = 8,
+            Bars = 16,
+            SpecialNodes = new List<MusicNode>()
+        });
+        SceneData.IsRandomMode = false;
+        SceneManager.LoadScene(1);
+    }
+
+    public void RandomButtonClicked()
+    {
+        SceneData.Graph = GraphBuilder.BuildDynamicStructure(new GraphStructure
+        {
+            Lines = 5,
+            BeatsPerBar = 8,
+            Bars = 16,
+            SpecialNodes = new List<MusicNode>()
+        });
+        SceneData.IsRandomMode = true;
         SceneManager.LoadScene(1);
     }
 

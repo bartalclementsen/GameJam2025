@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets._Game.Scenes.Playgrounds.Jákup_Viljam.Models;
 using Jákup_Viljam;
 using Jákup_Viljam.Models;
 using UnityEngine;
@@ -30,6 +31,9 @@ public class GameHandler : MonoBehaviour
     [SerializeField] public MenuHandler menuHandler;
     [SerializeField] public PlayerController playerController;
 
+    [SerializeField] public AudioClip normalMusic;
+    [SerializeField] public AudioClip randomMusic;
+
     // Player
     [SerializeField] private GameObject _player;
     private MusicNode _playerInitialNode;
@@ -43,9 +47,9 @@ public class GameHandler : MonoBehaviour
     private MusicGraph _musicGraph;
     private Vector3 _initialPosition;
 
-    private readonly int _barCount = 16;
-    private readonly int _beatsPerBar = 8;
-    private readonly int _lines = 5;
+    private readonly int _barCount = SceneData.Graph?.GraphStructure.Bars ?? 16;
+    private readonly int _beatsPerBar = SceneData.Graph?.GraphStructure.BeatsPerBar ?? 8;
+    private readonly int _lines = SceneData.Graph?.GraphStructure.Lines ?? 5;
 
     public float unitsPerBeat = 1f;
 
@@ -102,6 +106,11 @@ public class GameHandler : MonoBehaviour
         DrawPlayer();
 
         yield return new WaitForSeconds(0.5f);
+
+        if (SceneData.IsRandomMode)
+        {
+            _audioNormal.clip = randomMusic;
+        }
 
         beatDriver.SetDistoredSound(_audioDistorted);
         beatDriver.StartPlaying();
@@ -387,13 +396,7 @@ public class GameHandler : MonoBehaviour
 
     private MusicGraph GenerateStaticMusicGraph()
     {
-        return GraphBuilder.BuildStaticStructure(new GraphStructure
-        {
-            Lines = _lines,
-            BeatsPerBar = _beatsPerBar,
-            Bars = _barCount,
-            SpecialNodes = new List<MusicNode>()
-        });
+        return SceneData.Graph;
     }
 }
 
