@@ -1,0 +1,598 @@
+fileFormatVersion: 2
+guid: 57b7d2dc0414cb4479960d2c83ad696d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4011314145154489076
+    second: Tangled Melodies with notes_0
+  - first:
+      213: 7135348524526659608
+    second: Tangled Melodies with notes_1
+  - first:
+      213: -1655481665836807542
+    second: Tangled Melodies with notes_2
+  - first:
+      213: 5531951511768608324
+    second: Tangled Melodies with notes_3
+  - first:
+      213: -7351524808231860365
+    second: Tangled Melodies with notes_4
+  - first:
+      213: -5873117750646782542
+    second: Tangled Melodies with notes_5
+  - first:
+      213: 5307318185391966080
+    second: Tangled Melodies with notes_6
+  - first:
+      213: -5369651083955454856
+    second: Tangled Melodies with notes_7
+  - first:
+      213: -3108010874192645584
+    second: Tangled Melodies with notes_8
+  - first:
+      213: -7680808909370589595
+    second: Tangled Melodies with notes_9
+  - first:
+      213: 2692608778967567783
+    second: Tangled Melodies with notes_10
+  - first:
+      213: -1778511748966808370
+    second: Tangled Melodies with notes_11
+  - first:
+      213: 2547856707306607715
+    second: Tangled Melodies with notes_12
+  - first:
+      213: -3865507389973394522
+    second: Tangled Melodies with notes_13
+  - first:
+      213: -9072563269941875963
+    second: Tangled Melodies with notes_14
+  - first:
+      213: -7498028120874349581
+    second: Tangled Melodies with notes_15
+  - first:
+      213: -6817778883016324713
+    second: Tangled Melodies with notes_16
+  - first:
+      213: 6572279285520438456
+    second: Tangled Melodies with notes_17
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_0
+      rect:
+        serializedVersion: 2
+        x: 561
+        y: 611
+        width: 22
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fade6056fc0ba730800000000000000
+      internalID: 4011314145154489076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_1
+      rect:
+        serializedVersion: 2
+        x: 572
+        y: 584
+        width: 22
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 818e409ada9d50360800000000000000
+      internalID: 7135348524526659608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_2
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 585
+        width: 22
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8a00af223c8609e0800000000000000
+      internalID: -1655481665836807542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_3
+      rect:
+        serializedVersion: 2
+        x: 491
+        y: 136
+        width: 693
+        height: 448
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44e27a5279075cc40800000000000000
+      internalID: 5531951511768608324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_4
+      rect:
+        serializedVersion: 2
+        x: 515
+        y: 553
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3774edf03232af990800000000000000
+      internalID: -7351524808231860365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_5
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 584
+        width: 21
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b548acd58e7e7ea0800000000000000
+      internalID: -5873117750646782542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_6
+      rect:
+        serializedVersion: 2
+        x: 1318
+        y: 568
+        width: 30
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 087424e25c167a940800000000000000
+      internalID: 5307318185391966080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_7
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 417
+        width: 67
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87c3b0de9ca2b75b0800000000000000
+      internalID: -5369651083955454856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_8
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 478
+        width: 43
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03232bda3902ed4d0800000000000000
+      internalID: -3108010874192645584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_9
+      rect:
+        serializedVersion: 2
+        x: 1484
+        y: 359
+        width: 79
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56e7f49ddf8486590800000000000000
+      internalID: -7680808909370589595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_10
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 368
+        width: 40
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7adc57d1b611e5520800000000000000
+      internalID: 2692608778967567783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_11
+      rect:
+        serializedVersion: 2
+        x: 1372
+        y: 405
+        width: 36
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec489fdbcf47157e0800000000000000
+      internalID: -1778511748966808370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_12
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 103
+        width: 38
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3645b991d2ecb5320800000000000000
+      internalID: 2547856707306607715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_13
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 156
+        width: 108
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ab0df75285fa5ac0800000000000000
+      internalID: -3865507389973394522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_14
+      rect:
+        serializedVersion: 2
+        x: 1347
+        y: 129
+        width: 144
+        height: 159
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50babd446c7c71280800000000000000
+      internalID: -9072563269941875963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_15
+      rect:
+        serializedVersion: 2
+        x: 417
+        y: 46
+        width: 61
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fb056b7627a1f790800000000000000
+      internalID: -7498028120874349581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_16
+      rect:
+        serializedVersion: 2
+        x: 1181
+        y: 73
+        width: 28
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79907a06a326261a0800000000000000
+      internalID: -6817778883016324713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tangled Melodies with notes_17
+      rect:
+        serializedVersion: 2
+        x: 1201
+        y: 57
+        width: 37
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b49a12503d653b50800000000000000
+      internalID: 6572279285520438456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Tangled Melodies with notes_0: 4011314145154489076
+      Tangled Melodies with notes_1: 7135348524526659608
+      Tangled Melodies with notes_10: 2692608778967567783
+      Tangled Melodies with notes_11: -1778511748966808370
+      Tangled Melodies with notes_12: 2547856707306607715
+      Tangled Melodies with notes_13: -3865507389973394522
+      Tangled Melodies with notes_14: -9072563269941875963
+      Tangled Melodies with notes_15: -7498028120874349581
+      Tangled Melodies with notes_16: -6817778883016324713
+      Tangled Melodies with notes_17: 6572279285520438456
+      Tangled Melodies with notes_2: -1655481665836807542
+      Tangled Melodies with notes_3: 5531951511768608324
+      Tangled Melodies with notes_4: -7351524808231860365
+      Tangled Melodies with notes_5: -5873117750646782542
+      Tangled Melodies with notes_6: 5307318185391966080
+      Tangled Melodies with notes_7: -5369651083955454856
+      Tangled Melodies with notes_8: -3108010874192645584
+      Tangled Melodies with notes_9: -7680808909370589595
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

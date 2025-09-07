@@ -8,6 +8,7 @@ public class StartSceneHandler : MonoBehaviour
 {
     [SerializeField] private GameObject _mainMenu;
     [SerializeField] private GameObject _highScoreMenu;
+    [SerializeField] private GameObject _infoPanel;
     [SerializeField] private TextMeshProUGUI _highScoreText;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -60,5 +61,17 @@ public class StartSceneHandler : MonoBehaviour
     {
         _mainMenu.SetActive(true);
         _highScoreMenu.SetActive(false);
+    }
+
+    public void ShowInfo()
+    {
+        _mainMenu.SetActive(false);
+        _infoPanel.SetActive(true);
+    }
+
+    public void BackFromInfo()
+    {
+        _mainMenu.SetActive(true);
+        _infoPanel.SetActive(false);
     }
 }
