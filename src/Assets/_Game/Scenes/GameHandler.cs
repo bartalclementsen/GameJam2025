@@ -1,15 +1,8 @@
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Jákup_Viljam;
 using Jákup_Viljam.Models;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Audio;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.HableCurve;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class GameHandler : MonoBehaviour
 {
@@ -24,6 +17,7 @@ public class GameHandler : MonoBehaviour
     [SerializeField] private Camera _mainCamera;
     [SerializeField] private LineRenderer _scrubber;
     [SerializeField] private float _halfCycleDuration = 2f;
+    [SerializeField] public BeatDriver beatDriver;
 
     // Player
     [SerializeField] private GameObject _player;
@@ -33,33 +27,35 @@ public class GameHandler : MonoBehaviour
     public int CurrentBar = 0;
     public int CurrentBeat = 0;
 
-    private RhythmHandler2 _rhythmHandler;
     private Core.Loggers.ILogger _logger;
     private GameObject _levelParent;
     private MusicGraph _musicGraph;
     private Vector3 _initialPosition;
-    private bool _isGameOver;
 
     private readonly int _barCount = 16;
     private readonly int _beatsPerBar = 8;
     private readonly int _lines = 5;
 
-    private float _speed = 1.5f;
-
-    private float _eighthNoteInterval;
-    private float _nextEventTime;
-    private bool _isPlaying = false;
-
     public float unitsPerBeat = 1f;
-    private float _beatDuration;
-    private double _nextBeatTime;
-    private Vector3 _scrubberTargetPosition;
-    private double _startTime;
+
+    private readonly float _perfectWindowThreshold = 50f;
+    private readonly float _goodWindowThreshold = 100f;
+
+    /* ----------------------------------------------------------------------------  */
+    /*                                   Lifecycle                                   */
+    /* ----------------------------------------------------------------------------  */
+    private void OnEnable()
+    {
+        beatDriver.OnTick += HandleTick;
+    }
+
+    private void OnDisable()
+    {
+        beatDriver.OnTick -= HandleTick;
+    }
 
     private void Start()
     {
-        _startTime = AudioSettings.dspTime;
-
         _logger = Game.Container.Resolve<Core.Loggers.ILoggerFactory>().Create(this);
         _musicGraph = GenerateStaticMusicGraph();
 
@@ -68,9 +64,7 @@ public class GameHandler : MonoBehaviour
 
         _initialPosition = transform.position;
 
-        _rhythmHandler = new RhythmHandler2(_startTime);
-
-        _audioNormal.Play();
+        //_audioNormal.Play();
 
         RenderGraph();
         DrawPlayer();
@@ -80,49 +74,80 @@ public class GameHandler : MonoBehaviour
     private void Update()
     {
         HandScrubberMovement();
-        HandleBeetChecker();
-
-
-        if (!_audioNormal.isPlaying && _isPlaying)
-        {
-            _isPlaying = false;
-        }
     }
 
     private void FixedUpdate()
     {
         HandlerPlayerControls();
     }
+    /* ----------------------------------------------------------------------------  */
+    /*                                PRIVATE METHODS                                */
+    /* ----------------------------------------------------------------------------  */
 
-    private void AdvanceBeat()
+    private void HandleTick()
     {
-        CurrentBeat++;
-        if (CurrentBeat >= _beatsPerBar)
-        {
-            CurrentBeat = 0;
-            CurrentBar++;
-        }
-
-        if (CurrentBar >= _barCount)
-        {
-            _logger?.Log("Song finished!");
-            _isGameOver = true;
-        }
+        Debug.Log("Tick ");
+        HandlePlayerMovement();
     }
 
-    private float _perfectWindowThreshold = 50f;
-    private float _goodWindowThreshold = 100f;
+
+    private int _lastTickRealign = 0;
+    private double _currentTickStartDsp = 0;
 
     private void HandScrubberMovement()
     {
-        var elapsed = (float)(AudioSettings.dspTime - _startTime);
 
-        transform.position = new Vector3(_initialPosition.x + 0.45f - (elapsed / 0.6f), _initialPosition.y, 0);
+        if (beatDriver.CurrentTick != _lastTickRealign)
+        {
+            _lastTickRealign = beatDriver.CurrentTick;
+            // Establish tick start DSP time (previous tick end)
+            _currentTickStartDsp = beatDriver.NextTickDsp - beatDriver.SPB;
+
+            transform.position = new Vector3(_initialPosition.x + 0.45f - (beatDriver.CurrentTick * 0.5f), _initialPosition.y, 0);
+        }
+        else
+        {
+
+            // Interpolate between current tick position and next tick position based on elapsed fraction.
+            double now = AudioSettings.dspTime;
+
+            // Guard: if music not started yet.
+            if (beatDriver.NextTickDsp <= 0 || now < _currentTickStartDsp)
+                return;
+
+            double elapsed = now - _currentTickStartDsp;
+            double t = elapsed / beatDriver.SPB;
+            if (t < 0) t = 0;
+            if (t > 1) t = 1;
+
+            var currentBasePos = new Vector3(
+                _initialPosition.x + 0.45f - (beatDriver.CurrentTick * 0.5f),
+                _initialPosition.y,
+                0);
+
+            var nextTickPos = new Vector3(
+                _initialPosition.x + 0.45f - ((beatDriver.CurrentTick + 1) * 0.5f),
+                _initialPosition.y,
+                0);
+
+            // Linear interpolation for constant speed. Replace with SmoothStep if you want easing.
+            transform.position = Vector3.Lerp(currentBasePos, nextTickPos, (float)t);
+
+            //double now = AudioSettings.dspTime;
+            //double timeUntilNextTick = beatDriver.NextTickDsp - now;
+            //var nextTickPosition = new Vector3(_initialPosition.x + 0.45f - ((beatDriver.CurrentTick + 1) * 0.5f), _initialPosition.y, 0);
+
+            //transform.position = Vector3.Lerp(
+            //    transform.position,
+            //    nextTickPosition,
+            //    (float)timeUntilNextTick
+            //);
+        }
     }
 
     private void HandlePlayerMovement()
     {
-        if(_playerCurrentNode.DownNode != null)
+        if (_playerCurrentNode.DownNode != null)
         {
             _playerCurrentNode = _playerCurrentNode.DownNode;
         }
@@ -136,7 +161,7 @@ public class GameHandler : MonoBehaviour
 
     private void DrawPlayer()
     {
-        if(_playerCurrentNode == null)
+        if (_playerCurrentNode == null)
         {
             return;
         }
@@ -151,10 +176,16 @@ public class GameHandler : MonoBehaviour
 
         if (isUpPressed || isDownPressed)
         {
-            var now = Time.time * 1000f;
-            bool shouldTryToMove = Mathf.Abs(now - _rhythmHandler.NextTickTime) <= _goodWindowThreshold;
+            double now = AudioSettings.dspTime;
+            double diff = now - beatDriver.NextTickDsp;
+            if (diff < 0)
+            {
+                diff = -diff;
+            }
 
-            if(shouldTryToMove)
+            bool shouldTryToMove = diff <= _goodWindowThreshold;
+
+            if (shouldTryToMove)
             {
                 // player index
 
@@ -164,31 +195,6 @@ public class GameHandler : MonoBehaviour
 
                 // handle movement events
             }
-        }
-    }
-
-    private void HandleBeetChecker()
-    {
-
-        if (_rhythmHandler.ShouldTick())
-        {
-            Debug.Log("Tick " + _rhythmHandler.CurrentTick);
-            AdvanceBeat();
-            HandlePlayerMovement();
-        }
-
-        if (_audioNormal.isPlaying && !_isPlaying)
-        {
-            _isPlaying = true;
-            _nextEventTime = (float)AudioSettings.dspTime + _eighthNoteInterval;
-        }
-
-        if (_isPlaying && AudioSettings.dspTime >= _nextEventTime)
-        {
-            // Do something on every eighth note
-            Debug.Log("Eighth note!");
-
-            _nextEventTime += _eighthNoteInterval;
         }
     }
 
@@ -455,44 +461,5 @@ public class GameHandler : MonoBehaviour
         };
 
         return GraphBuilder.BuildGraph(structure);
-    }
-
-    public class RhythmHandler2
-    {
-        public int BPM = 100;
-        public int Subdivisions = 8;
-        public int CurrentTick { get; private set; }
-        public float NextTickTime { get; set; }
-
-        private float _msPerTick;
-        private double _startTime;        
-
-        public RhythmHandler2(double startTime)
-        {
-            _startTime = startTime;
-
-            var elapsed = (float)(AudioSettings.dspTime - _startTime);
-
-            //_logger = Game.Container.Resolve<Core.Loggers.ILoggerFactory>().Create(this);
-
-            _msPerTick = 300f;
-            NextTickTime = _msPerTick - (elapsed % 300f);
-        }
-
-      
-        public bool ShouldTick()
-        {
-            var elapsed = (float)(AudioSettings.dspTime - _startTime);
-            float now = (elapsed * 1000f);
-
-            if(now >= NextTickTime)
-            {
-                CurrentTick++;
-                NextTickTime += _msPerTick - (elapsed % 300f);
-                return true;
-            }
-
-            return false;
-        }
     }
 }
