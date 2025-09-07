@@ -1,7 +1,7 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using J�kup_Viljam.Models;
+using Jákup_Viljam.Models;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
