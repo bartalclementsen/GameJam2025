@@ -35,7 +35,8 @@ namespace Jákup_Viljam.Models
                     if (node.Type == NodeType.Tangled)
                     {
                         Array values = Enum.GetValues(typeof(LineType));
-                        node.LineType = (LineType)values.GetValue(_rng.Next(values.Length))!;
+                        int index = _rng.Next(1, values.Length); 
+                        node.LineType = (LineType)values.GetValue(index)!;
                     }
                 }
             }
