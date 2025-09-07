@@ -75,7 +75,11 @@ public class BeatDriver : MonoBehaviour
     public void Pause()
     {
         source.Pause();
-        distored.Pause();
+
+        if (distored != null)
+        {
+            distored.Pause();
+        }
     }
 
     public double GetTimeUnitNextTick()
@@ -123,7 +127,12 @@ public class BeatDriver : MonoBehaviour
     {
         // Re-align nextTickDsp to the current song position
         source.UnPause();
-        distored.UnPause();
+
+        if(distored != null)
+        {
+            distored.UnPause();
+        }
+
         double songPos = AudioSettings.dspTime - SongStartDsp - firstBeatOffset;
         if (songPos < 0)
         {

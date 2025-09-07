@@ -28,6 +28,7 @@ public class GameHandler : MonoBehaviour
     [SerializeField] public HighScoreHandler highScoreHandler;
     [SerializeField] public GameTimer gameTimer;
     [SerializeField] public MenuHandler menuHandler;
+    [SerializeField] public PlayerController playerController;
 
     // Player
     [SerializeField] private GameObject _player;
@@ -87,8 +88,6 @@ public class GameHandler : MonoBehaviour
 
         _initialPosition = transform.position;
 
-        IEnumerable enumerable = RenderGraph();
-
         int i = 0;
         foreach (object item in RenderGraph())
         {
@@ -140,6 +139,7 @@ public class GameHandler : MonoBehaviour
 
     private void HandleTick()
     {
+        playerController.Tick();
         HandlePlayerMovement();
     }
 
@@ -310,7 +310,6 @@ public class GameHandler : MonoBehaviour
     private IEnumerable RenderGraph()
     {
         _levelParent = GameObject.Instantiate(new GameObject(), this.transform);
-
 
         IEnumerable<MusicNode> allNodes = _musicGraph.AllNodes;
         IEnumerable<IGrouping<int, MusicNode>> bars = allNodes.GroupBy(o => o.Bar);
