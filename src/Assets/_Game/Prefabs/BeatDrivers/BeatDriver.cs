@@ -1,10 +1,13 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class BeatDriver : MonoBehaviour
 {
     [Header("Audio")]
     public AudioSource source;      // assign in Inspector; disable Play On Awake
+    [Header("Audio")]
+    public AudioSource distored;      // assign in Inspector; disable Play On Awake
     [Header("Beat Grid")]
     public float bpm = 100f;        // your track’s BPM
     [Tooltip("Time in seconds from song start to the first beat (if intro/silence).")]
@@ -22,6 +25,8 @@ public class BeatDriver : MonoBehaviour
 
     public double SPB { get; private set; }                     // seconds per (subdivided) beat
 
+    public double CurrentTickStartDsp { get; private set; }
+
     private void Awake()
     {
         SPB = 60.0 / bpm / subdivision;
@@ -32,11 +37,17 @@ public class BeatDriver : MonoBehaviour
     //    StartPlaying();   
     //}
 
+    public void SetDistoredSound(AudioSource distored)
+    {
+        this.distored = distored;
+    }
+
     public void StartPlaying()
     {
         // Schedule start slightly in the future for stable timing
         SongStartDsp = AudioSettings.dspTime + 0.15;
         source.PlayScheduled(SongStartDsp);
+        distored.PlayScheduled(SongStartDsp);
 
         NextTickDsp = SongStartDsp + firstBeatOffset + SPB; // first tick after start
     }
@@ -54,6 +65,8 @@ public class BeatDriver : MonoBehaviour
         while (dsp >= NextTickDsp)
         {
             CurrentTick++;
+            CurrentTickStartDsp = NextTickDsp - SPB;
+
             OnTick?.Invoke();
             NextTickDsp += SPB;
         }
@@ -63,12 +76,47 @@ public class BeatDriver : MonoBehaviour
     public void Pause()
     {
         source.Pause();
+        distored.Pause();
+    }
+
+    public double GetTimeUnitNextTick()
+    {
+        double now = AudioSettings.dspTime;
+
+        // Guard: if music not started yet.
+        if (NextTickDsp <= 0 || now < CurrentTickStartDsp)
+            return 0;
+
+        double elapsed = now - CurrentTickStartDsp;
+
+        double timeUnitNextTick = elapsed / SPB;
+
+        if (timeUnitNextTick < 0)
+            timeUnitNextTick = 0;
+
+        if (timeUnitNextTick > 1)
+            timeUnitNextTick = 1;
+
+        return timeUnitNextTick;
+    }
+
+    public double GetTimeSinceLastTick()
+    {
+        double now = AudioSettings.dspTime;
+
+        // Guard: if music not started yet.
+        if (NextTickDsp <= 0 || now < CurrentTickStartDsp)
+            return 0;
+
+        double elapsed = now - CurrentTickStartDsp;
+        return elapsed;
     }
 
     public void Resume()
     {
         // Re-align nextTickDsp to the current song position
         source.UnPause();
+        distored.UnPause();
         double songPos = AudioSettings.dspTime - SongStartDsp - firstBeatOffset;
         if (songPos < 0)
         {
