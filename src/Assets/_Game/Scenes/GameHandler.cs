@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Jákup_Viljam.Models;
@@ -54,8 +55,13 @@ public class GameHandler : MonoBehaviour
         beatDriver.OnTick -= HandleTick;
     }
 
-    private void Start()
+    int perFrame = 20;
+    IEnumerator Start()
     {
+        // optional: hide world until ready
+        QualitySettings.vSyncCount = 1; // keep smooth if you changed it elsewhere
+        Application.targetFrameRate = 60;
+
         _logger = Game.Container.Resolve<Core.Loggers.ILoggerFactory>().Create(this);
         _musicGraph = GenerateStaticMusicGraph();
 
@@ -64,10 +70,22 @@ public class GameHandler : MonoBehaviour
 
         _initialPosition = transform.position;
 
-        //_audioNormal.Play();
+        var enumerable = RenderGraph();
 
-        RenderGraph();
+        int i = 0;
+        foreach (var item in RenderGraph())
+        {
+            if ((i + 1) % perFrame == 0)
+                yield return null; // give a frame back to the engine
+
+            i++;
+        }
+        
         DrawPlayer();
+
+        yield return new WaitForSeconds(0.5f); 
+
+        beatDriver.StartPlaying();
     }
 
     // Update is called once per frame
@@ -80,9 +98,12 @@ public class GameHandler : MonoBehaviour
     {
         HandlerPlayerControls();
     }
+
     /* ----------------------------------------------------------------------------  */
     /*                                PRIVATE METHODS                                */
     /* ----------------------------------------------------------------------------  */
+
+
 
     private void HandleTick()
     {
@@ -198,7 +219,80 @@ public class GameHandler : MonoBehaviour
         }
     }
 
-    private void RenderGraph()
+    private IEnumerable RenderGraph()
+    {
+        Vector3 start = transform.position;
+
+        _levelParent = GameObject.Instantiate(new GameObject(), this.transform);
+
+
+        IEnumerable<MusicNode> allNodes = _musicGraph.AllNodes;
+        IEnumerable<IGrouping<int, MusicNode>> bars = allNodes.GroupBy(o => o.Bar);
+
+        for (int barNumber = 0; barNumber < _barCount; barNumber++)
+        {
+            Vector3 position = new(-0.5f + start.x + (4 * barNumber), start.y - 1f, start.z);
+            var barSeperator = GameObject.Instantiate(_barSeperator, position, Quaternion.identity);
+            barSeperator.transform.parent = _levelParent.transform;
+
+            // Draw Bar Separator
+
+            for (int beatNumber = 0; beatNumber < _beatsPerBar; beatNumber++)
+            {
+                for (int lineNumber = 0; lineNumber < _lines; lineNumber++)
+                {
+                    MusicNode node = _musicGraph.GetNode(barNumber, beatNumber, lineNumber);
+
+                    var vector = new Vector3(start.x + (4f * barNumber) + (0.5f * beatNumber), start.y + (-0.5f * lineNumber), start.z);
+
+                    if (beatNumber % 2 == 0)
+                    {
+                        GameObject gameObjectToSpawn;
+                        if (node.Type == NodeType.Tangled)
+                        {
+                            if (node.LineType == LineType.AboveLine)
+                            {
+                                gameObjectToSpawn = _lineSegmentUp;
+                            }
+                            else
+                            {
+                                gameObjectToSpawn = _lineSegmentDown;
+                            }
+                        }
+                        else
+                        {
+                            gameObjectToSpawn = _lineSegment;
+                        }
+
+                        var segment = GameObject.Instantiate(gameObjectToSpawn, vector, Quaternion.identity);
+                        segment.transform.parent = _levelParent.transform;
+                    }
+
+                    // Draw Line Segment
+                    if (NodeType.Untangled == node.Type)
+                    {
+                        var point = GameObject.Instantiate(_point, vector, Quaternion.identity);
+                        point.transform.parent = _levelParent.transform;
+                    }
+                    else
+                    {
+
+                    }
+
+                    yield return null;
+
+
+                    //var barSeperator2 = GameObject.Instantiate(_barSeperator, vector, Quaternion.identity);
+                    //barSeperator2.transform.parent = _levelParent.transform;
+
+
+                    // Draw Note or Gem
+                }
+            }
+        }
+    }
+
+    private void RenderGraph2()
     {
         Vector3 start = transform.position;
 
