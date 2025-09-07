@@ -87,8 +87,6 @@ public class GameHandler : MonoBehaviour
 
         _initialPosition = transform.position;
 
-        IEnumerable enumerable = RenderGraph();
-
         int i = 0;
         foreach (object item in RenderGraph())
         {
@@ -310,7 +308,6 @@ public class GameHandler : MonoBehaviour
     private IEnumerable RenderGraph()
     {
         _levelParent = GameObject.Instantiate(new GameObject(), this.transform);
-
 
         IEnumerable<MusicNode> allNodes = _musicGraph.AllNodes;
         IEnumerable<IGrouping<int, MusicNode>> bars = allNodes.GroupBy(o => o.Bar);
