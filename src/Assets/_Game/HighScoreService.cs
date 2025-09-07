@@ -12,9 +12,9 @@ namespace _Game
     {
         public string Name;
 
-        public int Kills;
+        public int Percent;
 
-        public string Time;
+        public int Score;
 
         public string Date;
     }
@@ -29,7 +29,7 @@ namespace _Game
     {
         IEnumerable<HighScore> GetHighScores();
 
-        void AddHighScore(string name, int kills, TimeSpan time);
+        void AddHighScore(string name, int percent, int score);
     }
 
     public class HighScoreService : IHighScoreService
@@ -54,10 +54,9 @@ namespace _Game
             return _highScores.Scores.ToList();
         }
 
-        public void AddHighScore(string name, int kills, TimeSpan time)
+        public void AddHighScore(string name, int percent, int score)
         {
-            string timeString = $"{(int)time.TotalMinutes:00}:{time.Seconds:00}";
-            if (_highScores.Scores.Any(hs => hs.Name == name && hs.Kills == kills && hs.Time == timeString))
+            if (_highScores.Scores.Any(hs => hs.Name == name && hs.Percent == score && hs.Score == score))
             {
                 return; // Skip if already added
             }
@@ -65,7 +64,7 @@ namespace _Game
             int position = _highScores.Scores.Count;
             for (int i = 0; i < _highScores.Scores.Count; i++)
             {
-                if (_highScores.Scores[i].Kills < kills)
+                if (_highScores.Scores[i].Percent < percent)
                 {
                     position = i;
                     break;
@@ -75,8 +74,8 @@ namespace _Game
             _highScores.Scores.Insert(position, new HighScore()
             {
                 Name = name,
-                Kills = kills,
-                Time = timeString,
+                Percent = percent,
+                Score = score,
                 Date = DateTime.Now.ToString()
             });
 
