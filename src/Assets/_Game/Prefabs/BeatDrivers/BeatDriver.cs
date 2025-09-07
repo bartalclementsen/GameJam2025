@@ -1,5 +1,4 @@
 using System;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class BeatDriver : MonoBehaviour
@@ -85,17 +84,23 @@ public class BeatDriver : MonoBehaviour
 
         // Guard: if music not started yet.
         if (NextTickDsp <= 0 || now < CurrentTickStartDsp)
+        {
             return 0;
+        }
 
         double elapsed = now - CurrentTickStartDsp;
 
         double timeUnitNextTick = elapsed / SPB;
 
         if (timeUnitNextTick < 0)
+        {
             timeUnitNextTick = 0;
+        }
 
         if (timeUnitNextTick > 1)
+        {
             timeUnitNextTick = 1;
+        }
 
         return timeUnitNextTick;
     }
@@ -106,7 +111,9 @@ public class BeatDriver : MonoBehaviour
 
         // Guard: if music not started yet.
         if (NextTickDsp <= 0 || now < CurrentTickStartDsp)
+        {
             return 0;
+        }
 
         double elapsed = now - CurrentTickStartDsp;
         return elapsed;

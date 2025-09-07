@@ -113,7 +113,9 @@ public class GameHandler : MonoBehaviour
     private void Update()
     {
         if (isPause)
+        {
             return;
+        }
 
         HandlerPlayerInputs();
         HandScrubberMovement();
@@ -160,12 +162,21 @@ public class GameHandler : MonoBehaviour
 
             // Guard: if music not started yet.
             if (beatDriver.NextTickDsp <= 0 || now < _currentTickStartDsp)
+            {
                 return;
+            }
 
             double elapsed = now - _currentTickStartDsp;
             double t = elapsed / beatDriver.SPB;
-            if (t < 0) t = 0;
-            if (t > 1) t = 1;
+            if (t < 0)
+            {
+                t = 0;
+            }
+
+            if (t > 1)
+            {
+                t = 1;
+            }
 
             var currentBasePos = new Vector3(
                 _initialPosition.x + 0.45f - (beatDriver.CurrentTick * 0.5f),
@@ -228,7 +239,7 @@ public class GameHandler : MonoBehaviour
             nextNode = _playerCurrentNode.RightNode;
         }
 
-        if(nextNode == null)
+        if (nextNode == null)
         {
             //Finished
             Pause();
@@ -306,7 +317,7 @@ public class GameHandler : MonoBehaviour
 
         for (int barNumber = 0; barNumber < _barCount; barNumber++)
         {
-            Vector3 position = new(-0.5f + transform.position.x + (4 * barNumber), transform.position.y - 1f, transform.position.z);
+            Vector3 position = new(-0.5f + transform.position.x + (4 * barNumber), transform.position.y - 1f, -2);
             var barSeperator = GameObject.Instantiate(_barSeperator, position, Quaternion.identity);
             barSeperator.transform.parent = _levelParent.transform;
 

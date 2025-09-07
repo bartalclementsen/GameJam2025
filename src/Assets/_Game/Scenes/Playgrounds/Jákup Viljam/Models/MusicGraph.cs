@@ -113,7 +113,7 @@ namespace Jákup_Viljam.Models
                 {
                     if (_nodes.TryGetValue((nextBar, nextBeat, l), out MusicNode target))
                     {
-                        if(l == node.Line)
+                        if (l == node.Line)
                         {
                             node.RightNode = target;
                         }

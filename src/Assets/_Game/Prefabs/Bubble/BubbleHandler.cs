@@ -53,14 +53,14 @@ public class BubbleHandler : MonoBehaviour
     // Update is called once per frame
     private bool alphaUpDirection = true;
 
-    void Update()
+    private void Update()
     {
         ApplyScale();
-        var alpha = _color.a;
-        if(alphaUpDirection)
+        float alpha = _color.a;
+        if (alphaUpDirection)
         {
             alpha += Time.deltaTime * _alphaChangeSpeed;
-            if(alpha >= _maxAlpha)
+            if (alpha >= _maxAlpha)
             {
                 alpha = _maxAlpha;
                 alphaUpDirection = false;
@@ -69,7 +69,7 @@ public class BubbleHandler : MonoBehaviour
         else
         {
             alpha -= Time.deltaTime * _alphaChangeSpeed;
-            if(alpha <= _minAlpha)
+            if (alpha <= _minAlpha)
             {
                 alpha = _minAlpha;
                 alphaUpDirection = true;

@@ -50,7 +50,7 @@ public class HighScoreHandler : MonoBehaviour
 
     public int GetScore()
     {
-        var percent = (float)errorsFixed / (_initialErros + errorsAdded) * 100;
+        float percent = (float)errorsFixed / (_initialErros + errorsAdded) * 100;
 
         return (int)Mathf.Round(percent);
 

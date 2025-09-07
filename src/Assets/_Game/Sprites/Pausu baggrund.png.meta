@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a5c5b3cd2736b034b8b6e49decab9f6b
+guid: 30f306e3984a85a4e9c4a360e0114095
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6756278146597402120
-    second: High Score_0
+      213: 6731488575262011075
+    second: Pausu baggrund_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: High Score_0
+      name: Pausu baggrund_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 574
-        width: 664
-        height: 1066
+        y: 0
+        width: 1413
+        height: 1440
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8f9c35c62d0ec32a0800000000000000
-      internalID: -6756278146597402120
+      spriteID: 3cea71ab13d0b6d50800000000000000
+      internalID: 6731488575262011075
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      High Score_0: -6756278146597402120
+      Pausu baggrund_0: 6731488575262011075
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
