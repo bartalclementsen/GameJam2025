@@ -174,7 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.6509804}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -492,6 +492,7 @@ MonoBehaviour:
   highScoreHandler: {fileID: 1049540638}
   gameTimer: {fileID: 1947750436}
   menuHandler: {fileID: 1926670532}
+  playerController: {fileID: 1038105065}
   _player: {fileID: 1038105063}
   CurrentBar: 0
   CurrentBeat: 0
@@ -846,7 +847,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 0.9882353, a: 0.7529412}
+  m_Color: {r: 1, g: 1, b: 0.9882353, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2002,6 +2003,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a0c15290ab32f949b6cdcaafda61812, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  _normalSprite: {fileID: 784224501555629544, guid: 9ee37b44a2191aa45877995e0160ce6d, type: 3}
+  _tickSprite: {fileID: 2819087201537417385, guid: 1c6096478d6a4514e8ef1ed96a4af5d7, type: 3}
+  _renderer: {fileID: 1606883789}
 --- !u!114 &1049540638 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2190977871343826748, guid: dfc6ccdd65f5c904182dff95b55f5a03, type: 3}

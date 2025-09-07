@@ -28,6 +28,7 @@ public class GameHandler : MonoBehaviour
     [SerializeField] public HighScoreHandler highScoreHandler;
     [SerializeField] public GameTimer gameTimer;
     [SerializeField] public MenuHandler menuHandler;
+    [SerializeField] public PlayerController playerController;
 
     // Player
     [SerializeField] private GameObject _player;
@@ -140,6 +141,7 @@ public class GameHandler : MonoBehaviour
 
     private void HandleTick()
     {
+        playerController.Tick();
         HandlePlayerMovement();
     }
 
