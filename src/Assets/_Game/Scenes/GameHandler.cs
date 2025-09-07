@@ -233,6 +233,7 @@ public class GameHandler : MonoBehaviour
             //Finished
             Pause();
             menuHandler.ShowFinishedMenu();
+            return;
         }
 
         // Update model
