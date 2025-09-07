@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Core.Loggers;
-using UnityEngine;
 
 
 namespace Jákup_Viljam.Models
@@ -13,6 +12,10 @@ namespace Jákup_Viljam.Models
         public NodeType Type;
         public LineType LineType;
         public List<MusicNode> NextNodes = new();
+
+        public MusicNode UpNode { get; set; }
+        public MusicNode RightNode { get; set; }
+        public MusicNode DownNode { get; set; }
 
         private readonly Core.Loggers.ILogger _logger;
 

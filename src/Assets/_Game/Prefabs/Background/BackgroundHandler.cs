@@ -14,7 +14,7 @@ public class BackgroundHandler : MonoBehaviour
 
     private Core.Loggers.ILogger _logger;
 
-    float _lerpFrameTimeCounter = 0;
+    private float _lerpFrameTimeCounter = 0;
 
     private Color _baseColor;
 
@@ -48,17 +48,17 @@ public class BackgroundHandler : MonoBehaviour
 
             int currentColorIndex = FindColorIndex(_targetColor);
             _baseColor = _colors[currentColorIndex];
-            _logger.Log($"Changed base color to index {currentColorIndex}");
+            //_logger.Log($"Changed base color to index {currentColorIndex}");
 
             if (currentColorIndex == _colors.Length - 1)
             {
                 _targetColor = _colors[0];
-                _logger.Log("Changed target color to index 0");
+                //_logger.Log("Changed target color to index 0");
             }
             else
             {
                 _targetColor = _colors[currentColorIndex + 1];
-                _logger.Log($"Changed target color to index {currentColorIndex + 1}");
+                //_logger.Log($"Changed target color to index {currentColorIndex + 1}");
             }
         }
 

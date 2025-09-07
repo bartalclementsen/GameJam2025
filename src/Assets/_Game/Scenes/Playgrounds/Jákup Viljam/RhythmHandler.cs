@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Jákup_Viljam
 {
     public class RhythmHandler : MonoBehaviour
     {
         public int BPM = 100;
-        public int Subdivisions = 8; 
+        public int Subdivisions = 8;
         public int CurrentTick { get; private set; }
         public int CurrentBar = 0;
         public int CurrentBeat = 0;
@@ -23,14 +18,14 @@ namespace Jákup_Viljam
         private float _msPerTick;
         private float _nextTickTime;
 
-        private Core.Loggers.ILogger _logger;   
+        private Core.Loggers.ILogger _logger;
 
         private void Start()
         {
             _logger = Game.Container.Resolve<Core.Loggers.ILoggerFactory>().Create(this);
 
             _msPerTick = 60000f / BPM / (Subdivisions / 4f);
-            _nextTickTime = Time.time * 1000f + _msPerTick;
+            _nextTickTime = (Time.time * 1000f) + _msPerTick;
         }
 
         private void Update()
@@ -61,6 +56,9 @@ namespace Jákup_Viljam
             }
         }
 
-        public float NextTickTimeMs() => _nextTickTime;
+        public float NextTickTimeMs()
+        {
+            return _nextTickTime;
+        }
     }
 }

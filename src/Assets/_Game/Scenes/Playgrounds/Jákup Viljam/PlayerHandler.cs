@@ -31,10 +31,14 @@ namespace Jákup_Viljam
         public void Update()
         {
             if (Keyboard.current.upArrowKey.wasPressedThisFrame)
+            {
                 HandleInput(+1);
+            }
 
             if (Keyboard.current.downArrowKey.wasPressedThisFrame)
+            {
                 HandleInput(-1);
+            }
         }
 
         public void OnRhythmTick()

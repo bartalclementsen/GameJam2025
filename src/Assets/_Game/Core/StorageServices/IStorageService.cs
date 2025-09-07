@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Core.Mediators
+﻿namespace Core.Mediators
 {
     public interface IStorageService
     {

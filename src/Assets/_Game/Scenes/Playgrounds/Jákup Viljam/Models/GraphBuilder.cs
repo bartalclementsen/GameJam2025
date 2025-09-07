@@ -31,6 +31,7 @@ namespace Jákup_Viljam.Models
                 if (node != null)
                 {
                     node.Type = n.Type;
+                    node.LineType = LineType.OnLine;
                     if (node.Type == NodeType.Tangled)
                     {
                         Array values = Enum.GetValues(typeof(LineType));
