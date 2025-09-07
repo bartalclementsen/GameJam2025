@@ -39,8 +39,9 @@ public class GameHandler : MonoBehaviour
 
     public float unitsPerBeat = 1f;
 
-    private readonly float _perfectWindowThreshold = 50f;
-    private readonly float _goodWindowThreshold = 100f;
+    private int _lastTickRealign = 0;
+
+    private readonly int perFrame = 20;
 
     /* ----------------------------------------------------------------------------  */
     /*                                   Lifecycle                                   */
@@ -55,8 +56,7 @@ public class GameHandler : MonoBehaviour
         beatDriver.OnTick -= HandleTick;
     }
 
-    int perFrame = 20;
-    IEnumerator Start()
+    private IEnumerator Start()
     {
         // optional: hide world until ready
         QualitySettings.vSyncCount = 1; // keep smooth if you changed it elsewhere
@@ -70,21 +70,24 @@ public class GameHandler : MonoBehaviour
 
         _initialPosition = transform.position;
 
-        var enumerable = RenderGraph();
+        IEnumerable enumerable = RenderGraph();
 
         int i = 0;
-        foreach (var item in RenderGraph())
+        foreach (object item in RenderGraph())
         {
             if ((i + 1) % perFrame == 0)
+            {
                 yield return null; // give a frame back to the engine
+            }
 
             i++;
         }
-        
+
         DrawPlayer();
 
-        yield return new WaitForSeconds(0.5f); 
+        yield return new WaitForSeconds(0.5f);
 
+        beatDriver.SetDistoredSound(_audioDistorted);
         beatDriver.StartPlaying();
     }
 
@@ -96,23 +99,20 @@ public class GameHandler : MonoBehaviour
 
     private void FixedUpdate()
     {
-        HandlerPlayerControls();
+        HandlerPlayerInputs();
     }
 
     /* ----------------------------------------------------------------------------  */
     /*                                PRIVATE METHODS                                */
     /* ----------------------------------------------------------------------------  */
 
-
-
     private void HandleTick()
     {
-        Debug.Log("Tick ");
         HandlePlayerMovement();
     }
 
 
-    private int _lastTickRealign = 0;
+    //private int _lastTickRealign = 0;
     private double _currentTickStartDsp = 0;
 
     private void HandScrubberMovement()
@@ -153,32 +153,92 @@ public class GameHandler : MonoBehaviour
 
             // Linear interpolation for constant speed. Replace with SmoothStep if you want easing.
             transform.position = Vector3.Lerp(currentBasePos, nextTickPos, (float)t);
+        }
+    }
 
-            //double now = AudioSettings.dspTime;
-            //double timeUntilNextTick = beatDriver.NextTickDsp - now;
-            //var nextTickPosition = new Vector3(_initialPosition.x + 0.45f - ((beatDriver.CurrentTick + 1) * 0.5f), _initialPosition.y, 0);
 
-            //transform.position = Vector3.Lerp(
-            //    transform.position,
-            //    nextTickPosition,
-            //    (float)timeUntilNextTick
-            //);
+    private bool _wasDownPressed = false;
+    private bool _wasUpPressed = false;
+    private bool _isMoving = false;
+
+    private void HandlerPlayerInputs()
+    {
+        if (_isMoving == true)
+        {
+            return;
+        }
+
+        bool isUpPressed = Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed;
+        bool isDownPressed = Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed;
+
+        if (_wasUpPressed == false && isUpPressed)
+        {
+            _wasUpPressed = true;
+            _wasDownPressed = false;
+        }
+        else if (_wasDownPressed == false && isDownPressed)
+        {
+            _wasUpPressed = false;
+            _wasDownPressed = true;
         }
     }
 
     private void HandlePlayerMovement()
     {
-        if (_playerCurrentNode.DownNode != null)
+        if (_isMoving == true)
         {
-            _playerCurrentNode = _playerCurrentNode.DownNode;
-        }
-        else if (_playerCurrentNode.UpNode != null)
-        {
-            _playerCurrentNode = _playerCurrentNode.UpNode;
+            return;
         }
 
+        _isMoving = true;
+
+        // Determine next node
+        MusicNode nextNode;
+        if (_wasDownPressed && _playerCurrentNode?.DownNode != null)
+        {
+            nextNode = _playerCurrentNode.DownNode;
+        }
+        else if (_wasUpPressed && _playerCurrentNode?.UpNode != null)
+        {
+            nextNode = _playerCurrentNode.UpNode;
+        }
+        else
+        {
+            nextNode = _playerCurrentNode.RightNode;
+        }
+
+        // Update model
+        _playerCurrentNode = nextNode;
+
+        // Update view
         DrawPlayer();
+
+        _wasUpPressed = false;
+        _wasDownPressed = false;
+        _isMoving = false;
+
+        // HANDLE RESULT OF MOVE!!!
+        if (_playerCurrentNode.Type == NodeType.Tangled)
+        {
+            _playerCurrentNode.Type = NodeType.Nothing;
+            RenderNode(_playerCurrentNode);
+
+            // Play success sound
+
+            // Increment score
+        }
+        if (_playerCurrentNode.Type == NodeType.Untangled)
+        {
+            _playerCurrentNode.Type = NodeType.Tangled;
+            RenderNode(_playerCurrentNode);
+
+            // Play error sound
+
+            // dec Increment score
+        }
     }
+
+
 
     private void DrawPlayer()
     {
@@ -190,39 +250,8 @@ public class GameHandler : MonoBehaviour
         _player.transform.position = new Vector3(_player.transform.position.x, _initialPosition.y - (0.5f * _playerCurrentNode.Line), 0);
     }
 
-    private void HandlerPlayerControls()
-    {
-        bool isUpPressed = Keyboard.current.wKey.wasPressedThisFrame || Keyboard.current.upArrowKey.wasPressedThisFrame;
-        bool isDownPressed = Keyboard.current.sKey.wasPressedThisFrame || Keyboard.current.downArrowKey.wasPressedThisFrame;
-
-        if (isUpPressed || isDownPressed)
-        {
-            double now = AudioSettings.dspTime;
-            double diff = now - beatDriver.NextTickDsp;
-            if (diff < 0)
-            {
-                diff = -diff;
-            }
-
-            bool shouldTryToMove = diff <= _goodWindowThreshold;
-
-            if (shouldTryToMove)
-            {
-                // player index
-
-                // check if movement direction is valid
-
-                // move player
-
-                // handle movement events
-            }
-        }
-    }
-
     private IEnumerable RenderGraph()
     {
-        Vector3 start = transform.position;
-
         _levelParent = GameObject.Instantiate(new GameObject(), this.transform);
 
 
@@ -231,7 +260,7 @@ public class GameHandler : MonoBehaviour
 
         for (int barNumber = 0; barNumber < _barCount; barNumber++)
         {
-            Vector3 position = new(-0.5f + start.x + (4 * barNumber), start.y - 1f, start.z);
+            Vector3 position = new(-0.5f + transform.position.x + (4 * barNumber), transform.position.y - 1f, transform.position.z);
             var barSeperator = GameObject.Instantiate(_barSeperator, position, Quaternion.identity);
             barSeperator.transform.parent = _levelParent.transform;
 
@@ -242,124 +271,61 @@ public class GameHandler : MonoBehaviour
                 for (int lineNumber = 0; lineNumber < _lines; lineNumber++)
                 {
                     MusicNode node = _musicGraph.GetNode(barNumber, beatNumber, lineNumber);
-
-                    var vector = new Vector3(start.x + (4f * barNumber) + (0.5f * beatNumber), start.y + (-0.5f * lineNumber), start.z);
-
-                    if (beatNumber % 2 == 0)
-                    {
-                        GameObject gameObjectToSpawn;
-                        if (node.Type == NodeType.Tangled)
-                        {
-                            if (node.LineType == LineType.AboveLine)
-                            {
-                                gameObjectToSpawn = _lineSegmentUp;
-                            }
-                            else
-                            {
-                                gameObjectToSpawn = _lineSegmentDown;
-                            }
-                        }
-                        else
-                        {
-                            gameObjectToSpawn = _lineSegment;
-                        }
-
-                        var segment = GameObject.Instantiate(gameObjectToSpawn, vector, Quaternion.identity);
-                        segment.transform.parent = _levelParent.transform;
-                    }
-
-                    // Draw Line Segment
-                    if (NodeType.Untangled == node.Type)
-                    {
-                        var point = GameObject.Instantiate(_point, vector, Quaternion.identity);
-                        point.transform.parent = _levelParent.transform;
-                    }
-                    else
-                    {
-
-                    }
+                    RenderNode(node);
 
                     yield return null;
-
-
-                    //var barSeperator2 = GameObject.Instantiate(_barSeperator, vector, Quaternion.identity);
-                    //barSeperator2.transform.parent = _levelParent.transform;
-
-
-                    // Draw Note or Gem
                 }
             }
         }
     }
 
-    private void RenderGraph2()
+    private void RenderNode(MusicNode node)
     {
-        Vector3 start = transform.position;
+        var vector = new Vector3(transform.position.x + (4f * node.Bar) + (0.5f * node.Beat), transform.position.y + (-0.5f * node.Line), transform.position.z);
 
-        _levelParent = GameObject.Instantiate(new GameObject(), this.transform);
-
-
-        IEnumerable<MusicNode> allNodes = _musicGraph.AllNodes;
-        IEnumerable<IGrouping<int, MusicNode>> bars = allNodes.GroupBy(o => o.Bar);
-
-        for (int barNumber = 0; barNumber < _barCount; barNumber++)
+        if (node.GameObjects.Count > 0)
         {
-            Vector3 position = new(-0.5f + start.x + (4 * barNumber), start.y - 1f, start.z);
-            var barSeperator = GameObject.Instantiate(_barSeperator, position, Quaternion.identity);
-            barSeperator.transform.parent = _levelParent.transform;
-
-            // Draw Bar Separator
-
-            for (int beatNumber = 0; beatNumber < _beatsPerBar; beatNumber++)
+            foreach (GameObject go in node.GameObjects)
             {
-                for (int lineNumber = 0; lineNumber < _lines; lineNumber++)
+                GameObject.Destroy(go);
+            }
+            node.GameObjects.Clear();
+        }
+
+        if (node.Beat % 2 == 0)
+        {
+            GameObject gameObjectToSpawn;
+            if (node.Type == NodeType.Tangled)
+            {
+                if (node.LineType == LineType.AboveLine)
                 {
-                    MusicNode node = _musicGraph.GetNode(barNumber, beatNumber, lineNumber);
-
-                    var vector = new Vector3(start.x + (4f * barNumber) + (0.5f * beatNumber), start.y + (-0.5f * lineNumber), start.z);
-
-                    if (beatNumber % 2 == 0)
-                    {
-                        GameObject gameObjectToSpawn;
-                        if (node.Type == NodeType.Tangled)
-                        {
-                            if (node.LineType == LineType.AboveLine)
-                            {
-                                gameObjectToSpawn = _lineSegmentUp;
-                            }
-                            else
-                            {
-                                gameObjectToSpawn = _lineSegmentDown;
-                            }
-                        }
-                        else
-                        {
-                            gameObjectToSpawn = _lineSegment;
-                        }
-
-                        var segment = GameObject.Instantiate(gameObjectToSpawn, vector, Quaternion.identity);
-                        segment.transform.parent = _levelParent.transform;
-                    }
-
-                    // Draw Line Segment
-                    if (NodeType.Untangled == node.Type)
-                    {
-                        var point = GameObject.Instantiate(_point, vector, Quaternion.identity);
-                        point.transform.parent = _levelParent.transform;
-                    }
-                    else
-                    {
-
-                    }
-
-
-                    //var barSeperator2 = GameObject.Instantiate(_barSeperator, vector, Quaternion.identity);
-                    //barSeperator2.transform.parent = _levelParent.transform;
-
-
-                    // Draw Note or Gem
+                    gameObjectToSpawn = _lineSegmentUp;
+                }
+                else
+                {
+                    gameObjectToSpawn = _lineSegmentDown;
                 }
             }
+            else
+            {
+                gameObjectToSpawn = _lineSegment;
+            }
+
+            var segment = GameObject.Instantiate(gameObjectToSpawn, vector, Quaternion.identity);
+            node.GameObjects.Add(segment);
+            segment.transform.parent = _levelParent.transform;
+        }
+
+        // Draw Line Segment
+        if (NodeType.Untangled == node.Type)
+        {
+            var point = GameObject.Instantiate(_point, new Vector3(vector.x, vector.y, -2), Quaternion.identity);
+            point.transform.parent = _levelParent.transform;
+            node.GameObjects.Add(point);
+        }
+        else
+        {
+
         }
     }
 
@@ -557,3 +523,4 @@ public class GameHandler : MonoBehaviour
         return GraphBuilder.BuildGraph(structure);
     }
 }
+
