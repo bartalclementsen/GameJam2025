@@ -23,7 +23,6 @@ public class BubbleHandler : MonoBehaviour
     [Range(0f, 1f)]
     private float _minAlpha;
 
-
     [SerializeField]
     [Range(0.1f, 5f)]
     private float _alphaChangeSpeed = 1f;
@@ -47,7 +46,8 @@ public class BubbleHandler : MonoBehaviour
     void Update()
     {
         ApplyScale();
-        _spriteRenderer.color = new Vector4(_color.r, _color.g, _color.b, _maxAlpha - Mathf.PingPong(Time.time * _alphaChangeSpeed, _maxAlpha - _minAlpha));
+        _color.a = _maxAlpha - Mathf.PingPong(Time.time * _alphaChangeSpeed, _maxAlpha - _minAlpha);
+        _spriteRenderer.color = _color;
     }
 
     private void ApplyScale()
